@@ -3,6 +3,7 @@ package controller
 import (
 	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/modules/auth/services"
+	"api_tinggal_nikah/modules/dto"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -26,5 +27,23 @@ func CallbackAuthGoogle(c echo.Context) error {
 }
 
 func Login(c echo.Context) error {
+	user := new(dto.LoginDto)
+
+	if err := c.Bind(user); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"code":    http.StatusBadRequest,
+			"message": "invalid request",
+		})
+	}
+
+	if err := c.Validate(user); err != nil {
+		return err
+	}
+
+	data, err := services.Login(user)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, data)
+	}
+
 	return c.JSON(http.StatusOK, "berhasil login")
 }

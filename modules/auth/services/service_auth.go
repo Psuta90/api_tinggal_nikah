@@ -4,6 +4,7 @@ import (
 	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/db"
 	"api_tinggal_nikah/models"
+	"api_tinggal_nikah/modules/dto"
 	"api_tinggal_nikah/repository"
 	"api_tinggal_nikah/utils"
 	"errors"
@@ -11,11 +12,12 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type DataCallback struct {
 	Token   string
-	message string
+	Message string
 }
 
 func ServiceCallbackAuthGoogle(code string, c echo.Context) (*DataCallback, error) {
@@ -34,6 +36,7 @@ func ServiceCallbackAuthGoogle(code string, c echo.Context) (*DataCallback, erro
 	user := &models.User{
 		Email:    userinfo.EmailAddresses[0].Value,
 		FullName: userinfo.Names[0].DisplayName,
+		Role:     models.Customer,
 	}
 
 	claims := &config.JwtCustomClaims{}
@@ -54,13 +57,13 @@ func ServiceCallbackAuthGoogle(code string, c echo.Context) (*DataCallback, erro
 		if err != nil {
 			return &DataCallback{
 				Token:   "",
-				message: "gagal generate token",
+				Message: "gagal generate token",
 			}, errors.New("gagal generate token")
 		}
 
 		return &DataCallback{
 			Token:   tokenjwt,
-			message: "berhasil login",
+			Message: "berhasil login",
 		}, nil
 
 	} else {
@@ -73,14 +76,49 @@ func ServiceCallbackAuthGoogle(code string, c echo.Context) (*DataCallback, erro
 		if err != nil {
 			return &DataCallback{
 				Token:   "",
-				message: "gagal generate token",
+				Message: "gagal generate token",
 			}, errors.New("gagal generate token")
 		}
 
 		return &DataCallback{
 			Token:   tokenjwt,
-			message: "berhasil login",
+			Message: "berhasil login",
 		}, nil
 	}
+
+}
+
+func Login(userdto *dto.LoginDto) (*DataCallback, error) {
+
+	conn := db.GetDB()
+
+	userRepo := repository.NewUserRepository(conn)
+
+	user, err := userRepo.GetUserByEmail(userdto.Email)
+	if err != nil {
+		return &DataCallback{Token: "", Message: "silahkan masukan email atau password yang terdaftar"}, errors.New("silahkan masukan email atau password yang terdaftar")
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userdto.Password)); err != nil {
+		return &DataCallback{Token: "", Message: "silahkan masukan email atau password yang terdaftar"}, errors.New("silahkan masukan email atau password yang terdaftar")
+	}
+
+	claims := &config.JwtCustomClaims{
+		ID:    user.ID,
+		Name:  user.FullName,
+		Email: user.Email,
+	}
+
+	token, err := utils.GenerateToken(claims)
+	if err != nil {
+		return &DataCallback{}, errors.New("gagal create token silahkan coba login kembali")
+	}
+
+	var data = &DataCallback{
+		Token:   token,
+		Message: "berhasil login",
+	}
+
+	return data, nil
 
 }

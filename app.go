@@ -3,6 +3,7 @@ package main
 import (
 	"api_tinggal_nikah/db"
 	"api_tinggal_nikah/modules/auth"
+	"api_tinggal_nikah/utils"
 	"os"
 
 	"github.com/labstack/echo/v4"
@@ -11,8 +12,9 @@ import (
 func main() {
 	e := echo.New()
 	db.InitDB()
+	e.Validator = utils.NewCustomValidator()
 
-	//uncomment this every you change column or add tables
+	// uncomment this every you change column or add tables
 	// migrations := []migration.Migration{
 	// 	&migration.CreateUsersTable{},
 	// 	&migration.CreateAcaraTable{},
@@ -28,7 +30,7 @@ func main() {
 	// 		panic("Migration failed: " + err.Error())
 	// 	}
 	// }
-	//end migration
+	// end migration
 
 	v1 := e.Group(os.Getenv("PREFIX_API_VERSION"))
 	auth.Routes(v1)

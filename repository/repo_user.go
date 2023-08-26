@@ -12,6 +12,7 @@ type UserRepository interface {
 	CreateUser(user *models.User) (*models.User, error)
 	GetUserByID(id uint) (*models.User, error)
 	BeforeCreateUser(user *models.User) (*models.User, error)
+	GetUserByEmail(email string) (*models.User, error)
 	// Add more methods as needed
 }
 
@@ -33,6 +34,15 @@ func (ur *UserRepositoryImpl) GetUserByID(id uint) (*models.User, error) {
 	if err := ur.db.First(&user, id).Error; err != nil {
 		return nil, err
 	}
+	return &user, nil
+}
+
+func (ur *UserRepositoryImpl) GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+	if err := ur.db.First(&user, "email = ?", email).Error; err != nil {
+		return nil, err
+	}
+
 	return &user, nil
 }
 
