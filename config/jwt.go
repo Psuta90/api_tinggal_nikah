@@ -1,6 +1,7 @@
 package config
 
 import (
+	"api_tinggal_nikah/models"
 	"os"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -13,6 +14,7 @@ type JwtCustomClaims struct {
 	ID    uuid.UUID
 	Name  string
 	Email string
+	Role  models.RoleStatus
 	jwt.RegisteredClaims
 }
 

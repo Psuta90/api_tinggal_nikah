@@ -2,8 +2,9 @@ package controller
 
 import (
 	"api_tinggal_nikah/config"
+	"api_tinggal_nikah/modules/auth/dto"
 	"api_tinggal_nikah/modules/auth/services"
-	"api_tinggal_nikah/modules/dto"
+
 	"net/http"
 
 	"github.com/labstack/echo/v4"

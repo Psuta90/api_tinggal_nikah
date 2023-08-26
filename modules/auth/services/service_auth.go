@@ -4,7 +4,7 @@ import (
 	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/db"
 	"api_tinggal_nikah/models"
-	"api_tinggal_nikah/modules/dto"
+	"api_tinggal_nikah/modules/auth/dto"
 	"api_tinggal_nikah/repository"
 	"api_tinggal_nikah/utils"
 	"errors"
@@ -51,6 +51,7 @@ func ServiceCallbackAuthGoogle(code string, c echo.Context) (*DataCallback, erro
 
 		claims.ID = user.ID
 		claims.Email = user.Email
+		claims.Role = models.Customer
 		claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Hour * 24))
 
 		tokenjwt, err := utils.GenerateToken(claims)
@@ -70,6 +71,7 @@ func ServiceCallbackAuthGoogle(code string, c echo.Context) (*DataCallback, erro
 
 		claims.ID = data.ID
 		claims.Email = data.Email
+		claims.Role = data.Role
 		claims.RegisteredClaims.ExpiresAt = jwt.NewNumericDate(time.Now().Add(time.Hour * 24))
 
 		tokenjwt, err := utils.GenerateToken(claims)
@@ -107,6 +109,7 @@ func Login(userdto *dto.LoginDto) (*DataCallback, error) {
 		ID:    user.ID,
 		Name:  user.FullName,
 		Email: user.Email,
+		Role:  user.Role,
 	}
 
 	token, err := utils.GenerateToken(claims)
