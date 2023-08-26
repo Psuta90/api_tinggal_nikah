@@ -2,7 +2,7 @@ package main
 
 import (
 	"api_tinggal_nikah/db"
-	"api_tinggal_nikah/services/auth"
+	"api_tinggal_nikah/modules/auth"
 	"os"
 
 	"github.com/labstack/echo/v4"
