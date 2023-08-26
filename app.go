@@ -21,7 +21,9 @@ type GormAdapterWrapper struct {
 
 func main() {
 	e := echo.New()
+
 	db.InitDB()
+
 	e.Validator = utils.NewCustomValidator()
 
 	cwd, err := os.Getwd()
@@ -59,6 +61,7 @@ func main() {
 	// }
 	// end migration
 	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	v1 := e.Group(os.Getenv("PREFIX_API_VERSION"))
 	auth.Routes(v1)
