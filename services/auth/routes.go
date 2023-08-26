@@ -9,6 +9,6 @@ import (
 func Routes(r *echo.Group) {
 	v1 := r.Group("/auth")
 
-	v1.GET("/login", controller.Login)
+	v1.POST("/login", controller.Login)
 
 }

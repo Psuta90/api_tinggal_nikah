@@ -1,47 +1,45 @@
 package db
 
 import (
-	"database/sql"
+	"log"
 	"os"
 	"sync"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var (
-	once       sync.Once
-	dbInstance *gorm.DB // Add this line
-	sqlDB      *sql.DB  // Add this line
+	once     sync.Once
+	instance *gorm.DB
 )
 
-// InitDB initializes the database connection with pooling using GORM.
-func InitDB() (*gorm.DB, error) {
-	var err error
-
+func InitDB() {
 	once.Do(func() {
-		dbInstance, err = gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{})
+		// Replace with your actual database connection string
+
+		db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{
+			Logger: logger.Default.LogMode(logger.Info),
+		})
 		if err != nil {
-			panic("failed to connect database")
+			log.Fatal("Error connecting to the database:", err)
 		}
 
-		// Set connection pool settings here if needed
-		sqlDB, err := dbInstance.DB()
+		sqlDB, err := db.DB()
 		if err != nil {
-			panic("failed to get database instance")
+			log.Fatal("Error getting database connection:", err)
 		}
-		sqlDB.SetMaxIdleConns(10)
-		sqlDB.SetMaxOpenConns(100)
+
+		sqlDB.SetMaxOpenConns(10) // Set the maximum number of open connections
+		sqlDB.SetMaxIdleConns(5)  // Set the maximum number of idle connections
+
+		log.Println("Connected to the database!")
+
+		instance = db
 	})
-
-	return dbInstance, err
 }
 
-// GetDB returns the initialized database instance.
-func GetDB() (*gorm.DB, error) {
-	return InitDB()
-}
-
-func CloseDB() error {
-	return sqlDB.Close()
+func GetDB() *gorm.DB {
+	return instance
 }
