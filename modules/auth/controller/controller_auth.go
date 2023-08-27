@@ -4,6 +4,7 @@ import (
 	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/modules/auth/dto"
 	"api_tinggal_nikah/modules/auth/services"
+	"fmt"
 
 	"net/http"
 
@@ -46,5 +47,29 @@ func Login(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, data)
 	}
 
-	return c.JSON(http.StatusOK, "berhasil login")
+	return c.JSON(http.StatusOK, data)
+}
+
+func Register(c echo.Context) error {
+	user := new(dto.Register)
+
+	if err := c.Bind(user); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{
+			"code":    http.StatusBadRequest,
+			"message": "invalid request",
+		})
+	}
+
+	if err := c.Validate(user); err != nil {
+		return err
+	}
+
+	data, err := services.Register(user)
+	if err != nil {
+		fmt.Println(err)
+		return c.JSON(http.StatusBadRequest, data)
+	}
+
+	return c.JSON(http.StatusOK, data)
+
 }

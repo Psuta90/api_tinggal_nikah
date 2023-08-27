@@ -125,3 +125,64 @@ func Login(userdto *dto.LoginDto) (*DataCallback, error) {
 	return data, nil
 
 }
+
+func Register(userdto *dto.Register) (*DataCallback, error) {
+
+	conn := db.GetDB()
+	userRepo := repository.NewUserRepository(conn)
+
+	if userdto.Password != userdto.Confirm_Password {
+		return &DataCallback{
+			Token:   "",
+			Message: "password dan konfrimasi password tidak sama",
+		}, errors.New("konfirmasi password error")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userdto.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return &DataCallback{
+			Token:   "",
+			Message: "terjadi masalah pada saat hashpassword",
+		}, err
+	}
+
+	user := &models.User{
+		FullName: userdto.FullName,
+		Email:    userdto.Email,
+		Password: string(hashedPassword),
+		Role:     models.Customer,
+	}
+
+	userRepo.BeforeCreateUser(user)
+
+	if data, err := userRepo.CreateUser(user); err != nil {
+
+		return &DataCallback{
+			Token:   "",
+			Message: "silahkan daftar menggunakan akun yang belum terdaftar",
+		}, errors.New("akun sudah terdaftar")
+
+	} else {
+
+		claims := &config.JwtCustomClaims{
+			ID:    data.ID,
+			Name:  data.FullName,
+			Email: data.Email,
+			Role:  data.Role,
+		}
+
+		token, err := utils.GenerateToken(claims)
+		if err != nil {
+			return &DataCallback{
+				Token:   token,
+				Message: "berhasil daftar tapi gagal generate toke silahkan login manual",
+			}, nil
+		}
+
+		return &DataCallback{
+			Token:   token,
+			Message: "berhasil registrasi silahkan login",
+		}, nil
+
+	}
+}
