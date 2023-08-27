@@ -51,6 +51,10 @@ func main() {
 	// 	&migration.CreateMempelaiPriaTable{},
 	// 	&migration.CreateMempelaiWanitaTable{},
 	// 	&migration.CreateCasbinRule{},
+	// 	&migration.CreateGiftDigital{},
+	// 	&migration.CreateGuestBook{},
+	// 	&migration.CreatePackageCategory{},
+	// 	&migration.CreatePackageTable{},
 	// 	// Add other migration instances here if needed
 	// }
 	// for _, m := range migrations {
