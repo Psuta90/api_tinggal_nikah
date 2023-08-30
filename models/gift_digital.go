@@ -8,7 +8,7 @@ import (
 type GiftDigital struct {
 	gorm.Model
 	ID           uuid.UUID `gorm:"default:uuid_generate_v4();primaryKey"`
-	UserID       string
+	UserID       uuid.UUID
 	NoRekening   uint
 	PaymentType  string
 	NameRekening string

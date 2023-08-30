@@ -13,10 +13,8 @@
  - CREATE TYPE role_status AS ENUM ('admin', 'customer');
 
 ## migration
- - change model in folder model
- - if you add new model dont forget create migration file in folder migration
- - load struct from migration file you created
- - uncomment auto migrate gorm in app.go
+ - change env on root file DATABASE_URL with your database
+ - run go run migration.go
 
 ## setting rbac
  - first migrate

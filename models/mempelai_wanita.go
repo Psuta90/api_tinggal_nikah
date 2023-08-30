@@ -12,5 +12,5 @@ type MempelaiWanita struct {
 	FullName   string
 	NameFather string
 	NameMother string
-	UserID     string
+	UserID     uuid.UUID
 }

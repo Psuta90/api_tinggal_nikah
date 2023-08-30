@@ -41,33 +41,10 @@ func main() {
 		panic(err)
 	}
 
-	// uncomment this every you change column or add tables
-	// migrations := []migration.Migration{
-	// 	&migration.CreateUsersTable{},
-	// 	&migration.CreateAcaraTable{},
-	// 	&migration.CreateGalleryPhotosTable{},
-	// 	&migration.CreateLoveStoryTable{},
-	// 	&migration.CreateMempelaiPriaTable{},
-	// 	&migration.CreateMempelaiWanitaTable{},
-	// 	&migration.CreateCasbinRule{},
-	// 	&migration.CreateGiftDigital{},
-	// 	&migration.CreateGuestBook{},
-	// 	&migration.CreatePackageCategory{},
-	// 	&migration.CreatePackageTable{},
-	// 	// Add other migration instances here if needed
-	// }
-	// for _, m := range migrations {
-	// 	conn := db.GetDB()
-	// 	if err := m.Up(conn); err != nil {
-	// 		panic("Migration failed: " + err.Error())
-	// 	}
-	// }
-	// end migration
-
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	v1 := e.Group(os.Getenv("PREFIX_API_VERSION"))
-	routes.Routes(v1, enforcer)
+	routes.CustomerRoutes(v1, enforcer)
 	e.Logger.Fatal(e.Start(os.Getenv("APP_PORTS")))
 }

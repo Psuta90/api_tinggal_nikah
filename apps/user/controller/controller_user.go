@@ -7,5 +7,6 @@ import (
 )
 
 func AddWedding(c echo.Context) error {
+
 	return c.JSON(http.StatusOK, "endpoint for add user")
 }

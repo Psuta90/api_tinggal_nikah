@@ -12,5 +12,5 @@ type LoveStory struct {
 	Location string
 	Story    string `gorm:"type:text"`
 	Orders   uint
-	UserID   string
+	UserID   uuid.UUID
 }

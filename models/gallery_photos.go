@@ -12,5 +12,5 @@ type GalleryPhotos struct {
 	Orders         int
 	IsGallery      bool
 	IsHalamanUtama bool
-	UserID         string
+	UserID         uuid.UUID
 }
