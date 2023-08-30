@@ -1,7 +1,8 @@
 package routes
 
 import (
-	"github.com/Psuta90/api_tinggal_nikah/apps/auth/controller"
+	"api_tinggal_nikah/apps/auth/controller"
+
 	"github.com/labstack/echo/v4"
 )
 

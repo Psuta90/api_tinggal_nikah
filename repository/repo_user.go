@@ -2,9 +2,9 @@
 package repository
 
 import (
+	"api_tinggal_nikah/models"
 	"errors"
 
-	"github.com/Psuta90/api_tinggal_nikah/models"
 	"gorm.io/gorm"
 )
 

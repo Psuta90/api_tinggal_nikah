@@ -1,19 +1,15 @@
 package services
 
 import (
+	"api_tinggal_nikah/apps/auth/dto"
+	"api_tinggal_nikah/config"
+	"api_tinggal_nikah/db"
+	"api_tinggal_nikah/models"
+	"api_tinggal_nikah/repository"
+	"api_tinggal_nikah/utils"
 	"errors"
 	"time"
 
-	"github.com/Psuta90/api_tinggal_nikah/db"
-	"github.com/Psuta90/api_tinggal_nikah/repository"
-
-	"github.com/Psuta90/api_tinggal_nikah/utils"
-
-	"github.com/Psuta90/api_tinggal_nikah/config"
-
-	"github.com/Psuta90/api_tinggal_nikah/models"
-
-	"github.com/Psuta90/api_tinggal_nikah/apps/auth/dto"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"

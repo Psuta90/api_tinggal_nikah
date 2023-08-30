@@ -1,4 +1,4 @@
-module github.com/Psuta90/api_tinggal_nikah/apps/auth
+module api_tinggal_nikah/apps/auth
 
 go 1.19
 

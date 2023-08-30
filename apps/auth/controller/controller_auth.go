@@ -1,14 +1,13 @@
 package controller
 
 import (
+	"api_tinggal_nikah/apps/auth/dto"
+	"api_tinggal_nikah/apps/auth/services"
+	"api_tinggal_nikah/config"
 	"fmt"
-
-	"github.com/Psuta90/api_tinggal_nikah/config"
 
 	"net/http"
 
-	"github.com/Psuta90/api_tinggal_nikah/apps/auth/dto"
-	"github.com/Psuta90/api_tinggal_nikah/apps/auth/services"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/oauth2"
 )

@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"github.com/Psuta90/api_tinggal_nikah/models"
+	"api_tinggal_nikah/models"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"

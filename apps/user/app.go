@@ -1,13 +1,13 @@
 package main
 
 import (
+	"api_tinggal_nikah/apps/user/routes"
+	"api_tinggal_nikah/db"
+	"api_tinggal_nikah/utils"
 	"fmt"
 	"os"
 	"path"
 
-	"github.com/Psuta90/api_tinggal_nikah/apps/user/routes"
-	"github.com/Psuta90/api_tinggal_nikah/db"
-	"github.com/Psuta90/api_tinggal_nikah/utils"
 	"github.com/casbin/casbin/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/labstack/echo/v4"
@@ -36,7 +36,7 @@ func main() {
 		panic(err)
 	}
 
-	enforcer, err := casbin.NewEnforcer(path.Join(cwd, "middleware", "casbin", "model.conf"), adapter)
+	enforcer, err := casbin.NewEnforcer(path.Join(cwd, "../../", "middleware", "casbin", "model.conf"), adapter)
 	if err != nil {
 		panic(err)
 	}

@@ -1,10 +1,10 @@
 package middleware
 
 import (
+	"api_tinggal_nikah/config"
 	"fmt"
 	"net/http"
 
-	"github.com/Psuta90/api_tinggal_nikah/config"
 	"github.com/casbin/casbin/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"

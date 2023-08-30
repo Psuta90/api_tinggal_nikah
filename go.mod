@@ -1,4 +1,4 @@
-module github.com/Psuta90/api_tinggal_nikah
+module api_tinggal_nikah
 
 go 1.19
 

@@ -1,13 +1,10 @@
 package main
 
 import (
+	"api_tinggal_nikah/apps/auth/routes"
+	"api_tinggal_nikah/db"
+	"api_tinggal_nikah/utils"
 	"os"
-
-	"github.com/Psuta90/api_tinggal_nikah/db"
-
-	"github.com/Psuta90/api_tinggal_nikah/utils"
-
-	"github.com/Psuta90/api_tinggal_nikah/apps/auth/routes"
 
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/labstack/echo/v4"
