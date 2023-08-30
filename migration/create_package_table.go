@@ -1,7 +1,7 @@
 package migration
 
 import (
-	"api_tinggal_nikah/models"
+	"github.com/Psuta90/api_tinggal_nikah/models"
 
 	"gorm.io/gorm"
 )

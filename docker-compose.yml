@@ -1,16 +1,33 @@
 version: '3.9'
 services:
-  api_tinggal_nikah : 
-    build : .
+  api_tinggal_nikah_auth : 
+    build:
+      context: ./apps/auth
+      dockerfile: Dockerfile
     ports :
       - 3000:3000
     volumes : 
       - ./:/app
     env_file :
-      - .env.local
+      - ./apps/auth/.env.local
     command: bash -c "go mod tidy && air -c .air.toml"
     depends_on :
       - postgres
+  
+  api_tinggal_nikah_user : 
+    build:
+      context: ./apps/user
+      dockerfile: Dockerfile
+    ports :
+      - 3001:3001
+    volumes : 
+      - ./:/app
+    env_file :
+      - ./apps/user/.env.local
+    command: bash -c "go mod tidy && air -c .air.toml"
+    depends_on :
+      - postgres
+      - api_tinggal_nikah_auth
   
   postgres:
     image: postgres:latest
