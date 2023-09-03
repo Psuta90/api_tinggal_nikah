@@ -11,6 +11,7 @@
 ## ENUM POSTGRESQL
 
  - CREATE TYPE role_status AS ENUM ('admin', 'customer');
+ - CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 ## migration
  - change env on root file DATABASE_URL with your database
