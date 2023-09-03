@@ -20,7 +20,7 @@ type User struct {
 	GuestBook      []GuestBook     `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	MempelaiPria   MempelaiPria    `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	MempelaiWanita MempelaiWanita  `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	GiftDigital    GiftDigital     `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	GiftDigital    []GiftDigital   `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Domain         Domain          `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 

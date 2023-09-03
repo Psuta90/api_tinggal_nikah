@@ -14,4 +14,5 @@ type GuestBook struct {
 	Phone        string
 	LinkWhatsapp string
 	Message      string
+	Orders       int
 }

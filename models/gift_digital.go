@@ -12,4 +12,5 @@ type GiftDigital struct {
 	NoRekening   uint
 	PaymentType  string
 	NameRekening string
+	Orders       int
 }

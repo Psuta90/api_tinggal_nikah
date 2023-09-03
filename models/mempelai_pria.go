@@ -12,5 +12,6 @@ type MempelaiPria struct {
 	FullName   string
 	NameFather string
 	NameMother string
+	IsLeft     bool
 	UserID     uuid.UUID
 }
