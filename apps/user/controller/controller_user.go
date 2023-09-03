@@ -59,11 +59,13 @@ func AddWedding(c echo.Context) error {
 	}
 
 	wjs := &dto.AddWeddingJSON{
-		Acara:       *acs,
-		Mempelai:    *mps,
-		LoveStory:   *lss,
-		GiftDigital: *gds,
-		GuestBook:   *gbs,
+		Acara:         *acs,
+		Mempelai:      *mps,
+		LoveStory:     *lss,
+		GiftDigital:   *gds,
+		GuestBook:     *gbs,
+		Subdomain:     data.Subdomain,
+		PremiumDomain: data.PremiumDomain,
 	}
 
 	wjs.HalamanUtamaGallery = append(wjs.HalamanUtamaGallery, filesHalamanUtama...)
@@ -78,6 +80,6 @@ func AddWedding(c echo.Context) error {
 		return c.JSON(http.StatusUnprocessableEntity, err)
 	}
 
-	return c.JSON(http.StatusOK, echo.Map{"data": ServiceAddWedding})
+	return c.JSON(http.StatusOK, ServiceAddWedding)
 
 }

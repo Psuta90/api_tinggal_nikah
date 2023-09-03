@@ -11,6 +11,8 @@ type AddWeddingDto struct {
 	LoveStoryJSONSTR   string `form:"lovestory" json:"lovestory"`
 	GiftDigitalJSONSTR string `form:"gift_digital" json:"gift_digital"`
 	GusetBookJSONSTR   string `form:"guest_book" json:"guest_book"`
+	Subdomain          string `form:"subdomain"`
+	PremiumDomain      string `form:"premiumdomain"`
 }
 
 type AddWeddingJSON struct {
@@ -21,6 +23,8 @@ type AddWeddingJSON struct {
 	GuestBook           []DataGuestBook         `validate:"required,dive,required"`
 	HalamanUtamaGallery []*multipart.FileHeader `validate:"required,valid-image" `
 	GalleryPhotos       []*multipart.FileHeader `validate:"required,valid-image"`
+	Subdomain           string                  `validate:"required"`
+	PremiumDomain       string
 }
 
 type DataMempelai struct {
@@ -33,6 +37,7 @@ type DataAcara struct {
 	StartDate time.Time `json:"start_date" validate:"required"`
 	EndDate   time.Time `json:"end_date" validate:"required"`
 	Location  string    `json:"location" validate:"required"`
+	Place     string    `json:"place" validate:"required"`
 	Order     string    `json:"order" validate:"required"`
 }
 
