@@ -7,18 +7,18 @@ import (
 )
 
 type AcaraRepository interface {
-	CreateAcara(acara []*models.Acara) ([]*models.Acara, error)
+	CreateAcara(acara *[]models.Acara) error
 }
 
 type AcaraRepositoryImpl struct {
-	db *gorm.DB
+	tx *gorm.DB
 }
 
-func NewAcaraRepository(db *gorm.DB) AcaraRepository {
-	return &AcaraRepositoryImpl{db}
+func NewAcaraRepository(tx *gorm.DB) AcaraRepository {
+	return &AcaraRepositoryImpl{tx}
 }
 
-func (ar *AcaraRepositoryImpl) CreateAcara(acara []*models.Acara) ([]*models.Acara, error) {
-	result := ar.db.Create(&acara)
-	return acara, result.Error
+func (ar *AcaraRepositoryImpl) CreateAcara(acara *[]models.Acara) error {
+	result := ar.tx.Create(&acara)
+	return result.Error
 }

@@ -15,6 +15,6 @@ type Acara struct {
 	EndDate   time.Time
 	Place     string
 	Location  string
-	Orders    uint
+	Orders    int
 	UserID    uuid.UUID
 }

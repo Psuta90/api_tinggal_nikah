@@ -38,24 +38,26 @@ type DataAcara struct {
 	EndDate   time.Time `json:"end_date" validate:"required"`
 	Location  string    `json:"location" validate:"required"`
 	Place     string    `json:"place" validate:"required"`
-	Order     string    `json:"order" validate:"required"`
+	Order     int       `json:"order" validate:"required"`
 }
 
 type DataLoveStory struct {
 	Title    string `json:"title" validate:"required"`
 	Location string `json:"location" validate:"required"`
 	Story    string `json:"story" validate:"required"`
-	Order    string `json:"order" validate:"required"`
+	Order    int    `json:"order" validate:"required"`
 }
 
 type DataGiftDigital struct {
 	NoRekening   string `json:"no_rekening" validate:"required"`
 	PaymentType  string `json:"payment_type" validate:"required"`
 	NameRekening string `json:"nama_rekening" validate:"required"`
+	Order        int    `json:"order" validate:"required"`
 }
 
 type DataGuestBook struct {
 	Group          string      `json:"group" validate:"required"`
+	Order          int         `json:"order" validate:"required"`
 	DatasGuestBook []GuestBook `json:"data_guestbook" validate:"required,dive,required"`
 }
 

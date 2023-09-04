@@ -17,7 +17,6 @@ var (
 
 func InitDB() {
 	once.Do(func() {
-		// Replace with your actual database connection string
 
 		db, err := gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{
 			Logger: logger.Default.LogMode(logger.Info),
@@ -31,8 +30,8 @@ func InitDB() {
 			log.Fatal("Error getting database connection:", err)
 		}
 
-		sqlDB.SetMaxOpenConns(10) // Set the maximum number of open connections
-		sqlDB.SetMaxIdleConns(5)  // Set the maximum number of idle connections
+		sqlDB.SetMaxOpenConns(25) // Set the maximum number of open connections
+		sqlDB.SetMaxIdleConns(10) // Set the maximum number of idle connections
 
 		log.Println("Connected to the database!")
 

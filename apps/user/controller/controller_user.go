@@ -75,11 +75,6 @@ func AddWedding(c echo.Context) error {
 		return err
 	}
 
-	ServiceAddWedding, err := services.AddWeddingService(wjs)
-	if err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, err)
-	}
-
-	return c.JSON(http.StatusOK, ServiceAddWedding)
+	return services.AddWeddingService(c, wjs)
 
 }

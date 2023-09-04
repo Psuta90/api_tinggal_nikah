@@ -17,21 +17,21 @@ type UserRepository interface {
 }
 
 type UserRepositoryImpl struct {
-	db *gorm.DB
+	tx *gorm.DB
 }
 
-func NewUserRepository(db *gorm.DB) UserRepository {
-	return &UserRepositoryImpl{db}
+func NewUserRepository(tx *gorm.DB) UserRepository {
+	return &UserRepositoryImpl{tx}
 }
 
 func (ur *UserRepositoryImpl) CreateUser(user *models.User) (*models.User, error) {
-	result := ur.db.Create(&user)
+	result := ur.tx.Create(&user)
 	return user, result.Error
 }
 
 func (ur *UserRepositoryImpl) GetUserByID(id uint) (*models.User, error) {
 	var user models.User
-	if err := ur.db.First(&user, id).Error; err != nil {
+	if err := ur.tx.First(&user, id).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil
@@ -39,7 +39,7 @@ func (ur *UserRepositoryImpl) GetUserByID(id uint) (*models.User, error) {
 
 func (ur *UserRepositoryImpl) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
-	if err := ur.db.First(&user, "email = ?", email).Error; err != nil {
+	if err := ur.tx.First(&user, "email = ?", email).Error; err != nil {
 		return nil, err
 	}
 
@@ -47,7 +47,7 @@ func (ur *UserRepositoryImpl) GetUserByEmail(email string) (*models.User, error)
 }
 
 func (ur *UserRepositoryImpl) BeforeCreateUser(user *models.User) (*models.User, error) {
-	result := ur.db.First(&user, "email = ?", user.Email)
+	result := ur.tx.First(&user, "email = ?", user.Email)
 
 	if result.RowsAffected == 0 {
 		return user, nil
