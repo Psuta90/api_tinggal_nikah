@@ -9,7 +9,7 @@
 
 
 ## ENUM POSTGRESQL
-
+ - CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
  - CREATE TYPE role_status AS ENUM ('admin', 'customer');
 
 ## migration
