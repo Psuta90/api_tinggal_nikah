@@ -24,13 +24,13 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 			switch err.Tag() {
 			case "required":
 				// Pesan kesalahan kustom untuk tag "required"
-				errorMessage = fmt.Sprintf("%s : is required", err.Field())
+				errorMessage = fmt.Sprintf("%s : is required", err.StructNamespace())
 			case "email":
 				// Pesan kesalahan default untuk tag "email"
-				errorMessage = fmt.Sprintf("%s : is not a valid email address", err.Field())
+				errorMessage = fmt.Sprintf("%s : is not a valid email address", err.StructNamespace())
 			case "valid-image":
 				// Pesan kesalahan kustom untuk tag "required"
-				errorMessage = fmt.Sprintf("%s : is not a valid image check size less then 5mb or format image", err.Field())
+				errorMessage = fmt.Sprintf("%s : is not a valid image check size less then 5mb or format image", err.StructNamespace())
 			}
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, errorMessage)

@@ -22,3 +22,8 @@ func (ar *AcaraRepositoryImpl) CreateAcara(acara *[]models.Acara) error {
 	result := ar.tx.Create(&acara)
 	return result.Error
 }
+
+// func (ar *AcaraRepositoryImpl) UpdateAcara(acara *models.Acara) error {
+// 	result := ar.tx.Model(models.Acara{}).Where("id = ?", acara.ID)
+// 	return result.Error
+// }

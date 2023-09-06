@@ -8,6 +8,7 @@ import (
 
 type DomainRepository interface {
 	CreateDomain(domain *models.Domain) error
+	UpdateDomain(ch chan *models.Domain) error
 }
 
 type DomainRepositoryImpl struct {
@@ -22,4 +23,8 @@ func (dr *DomainRepositoryImpl) CreateDomain(domain *models.Domain) error {
 	result := dr.tx.Create(domain)
 
 	return result.Error
+}
+
+func (dr *DomainRepositoryImpl) UpdateDomain(ch chan *models.Domain) error {
+	return nil
 }

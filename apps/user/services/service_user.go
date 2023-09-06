@@ -325,3 +325,7 @@ func AddWeddingService(c echo.Context, data *dto.AddWeddingJSON) error {
 
 	return utils.NewAPIResponse(c).Success(0, "berhasil melakukan insert data", nil)
 }
+
+func UpdateWeddingService(c echo.Context, data *dto.UpdateWeddingJSON) error {
+	return utils.NewAPIResponse(c).Success(0, "", data)
+}
