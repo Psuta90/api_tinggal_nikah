@@ -8,6 +8,7 @@ import (
 
 type GiftDigitalRepository interface {
 	CreateGiftDigital(GiftDigital *[]models.GiftDigital) error
+	UpdateGiftDigital(GiftDigital *models.GiftDigital, errChan chan error)
 }
 
 type GiftDigitalRepositoryImpl struct {
@@ -21,5 +22,13 @@ func NewGiftDigitalRepository(tx *gorm.DB) GiftDigitalRepository {
 func (gdr *GiftDigitalRepositoryImpl) CreateGiftDigital(GiftDigital *[]models.GiftDigital) error {
 	result := gdr.tx.Create(GiftDigital)
 	return result.Error
+
+}
+
+func (gdr *GiftDigitalRepositoryImpl) UpdateGiftDigital(GiftDigital *models.GiftDigital, errChan chan error) {
+	result := gdr.tx.Model(&GiftDigital).Updates(&GiftDigital)
+	if result.Error != nil {
+		errChan <- result.Error
+	}
 
 }

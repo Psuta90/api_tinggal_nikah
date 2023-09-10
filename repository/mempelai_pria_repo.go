@@ -8,6 +8,7 @@ import (
 
 type MempelaiPriaRepository interface {
 	CreateMempelaiPria(mempelaipria *models.MempelaiPria) error
+	UpdateMempelaiPria(mempelaipria *models.MempelaiPria) error
 }
 
 type MempelaiPriaRepositoryImpl struct {
@@ -20,5 +21,10 @@ func NewMempelaiPriaRepository(tx *gorm.DB) MempelaiPriaRepository {
 
 func (mpr *MempelaiPriaRepositoryImpl) CreateMempelaiPria(mempelaipria *models.MempelaiPria) error {
 	result := mpr.tx.Create(mempelaipria)
+	return result.Error
+}
+
+func (mpr *MempelaiPriaRepositoryImpl) UpdateMempelaiPria(mempelaipria *models.MempelaiPria) error {
+	result := mpr.tx.Model(&mempelaipria).Updates(&mempelaipria)
 	return result.Error
 }

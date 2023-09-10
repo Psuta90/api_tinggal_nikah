@@ -16,7 +16,7 @@ func AddWedding(c echo.Context) error {
 	data := dto.AddWeddingDto{}
 
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(http.StatusOK, err.Error())
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
 	form, err := c.MultipartForm()
@@ -83,9 +83,14 @@ func UpdateWedding(c echo.Context) error {
 	data := dto.UpdateWeddingDto{}
 
 	if err := c.Bind(&data); err != nil {
-		return c.JSON(http.StatusOK, err.Error())
+		return c.JSON(http.StatusBadRequest, err.Error())
 	}
 
+	return services.UdateWeddingService(c, &data)
+
+}
+
+func UploadFile(c echo.Context) error {
 	form, err := c.MultipartForm()
 	if err != nil {
 		return err
@@ -94,66 +99,14 @@ func UpdateWedding(c echo.Context) error {
 	filesHalamanUtama := form.File["gallery_halaman_utama"]
 	filesGalleryPhoto := form.File["gallery_photo"]
 
-	uhu := new([]dto.UpdateDataGalleryPhotos)
-	ugp := new([]dto.UpdateDataGalleryPhotos)
-	umps := new(dto.UpdateDataMempelai)
-	uacs := new([]dto.UpdateDataAcara)
-	ulss := new([]dto.UpdateDataLoveStory)
-	ugds := new([]dto.UpdateDataGiftDigital)
-	ugbs := new([]dto.UpdateDataGuestBook)
-
-	if err := json.Unmarshal([]byte(data.WeddingDto.MempelaiJSONSTR), &umps); err != nil {
-		fmt.Println("Error:", err)
-		return utils.NewAPIResponse(c).Error(0, err.Error()+"in Mempelai", nil)
-	}
-
-	if err := json.Unmarshal([]byte(data.WeddingDto.AcaraJSONSTR), &uacs); err != nil {
-		fmt.Println("Error:", err)
-		return utils.NewAPIResponse(c).Error(0, err.Error()+"in Acara", nil)
-	}
-
-	if err := json.Unmarshal([]byte(data.WeddingDto.LoveStoryJSONSTR), &ulss); err != nil {
-		fmt.Println("Error:", err)
-		return utils.NewAPIResponse(c).Error(0, err.Error()+"in LoveStory", nil)
-	}
-
-	if err := json.Unmarshal([]byte(data.WeddingDto.GiftDigitalJSONSTR), &ugds); err != nil {
-		fmt.Println("Error:", err)
-		return utils.NewAPIResponse(c).Error(0, err.Error()+"in GiftDigital", nil)
-	}
-
-	if err := json.Unmarshal([]byte(data.WeddingDto.GusetBookJSONSTR), &ugbs); err != nil {
-		fmt.Println("Error:", err)
-		return utils.NewAPIResponse(c).Error(0, err.Error()+"in GuestBook", nil)
-	}
-
-	if err := json.Unmarshal([]byte(data.HalamanUtamaJSONSTR), &uhu); err != nil {
-		fmt.Println("Error:", err)
-		return utils.NewAPIResponse(c).Error(0, err.Error()+"in HalamanUtamaJson", nil)
-	}
-
-	if err := json.Unmarshal([]byte(data.GalleryPhotoJSONSTR), &ugp); err != nil {
-		fmt.Println("Error:", err)
-		return utils.NewAPIResponse(c).Error(0, err.Error()+"in GalleryPhotoJson", nil)
-	}
-
-	uwjs := &dto.UpdateWeddingJSON{
-		HalamanUtamaJSON:    *uhu,
-		GalleryPhotoJSON:    *ugp,
-		Acara:               *uacs,
-		Mempelai:            *umps,
-		LoveStory:           *ulss,
-		GiftDigital:         *ugds,
-		GuestBook:           *ugbs,
-		Subdomain:           data.WeddingDto.Subdomain,
-		PremiumDomain:       data.WeddingDto.PremiumDomain,
+	data := &dto.UploadFileDto{
 		HalamanUtamaGallery: filesHalamanUtama,
 		GalleryPhotos:       filesGalleryPhoto,
 	}
 
-	if err := utils.Validation(c, uwjs); err != nil {
+	if err := utils.Validation(c, data); err != nil {
 		return err
 	}
 
-	return services.UpdateWeddingService(c, uwjs)
+	return services.UploadFileService(c, data)
 }

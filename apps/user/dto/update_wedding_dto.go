@@ -1,68 +1,83 @@
 package dto
 
 import (
-	"mime/multipart"
+	"time"
 
 	"github.com/google/uuid"
 )
 
 type UpdateWeddingDto struct {
-	WeddingDto          AddWeddingDto
-	HalamanUtamaJSONSTR string `form:"halaman_utama" json:"halaman_utama"`
-	GalleryPhotoJSONSTR string `form:"gallery" json:"gallery"`
-}
-
-type UpdateWeddingJSON struct {
-	Mempelai            UpdateDataMempelai      `validate:"required"`
-	Acara               []UpdateDataAcara       `validate:"required,dive,required"`
-	LoveStory           []UpdateDataLoveStory   `validate:"required,dive,required"`
-	GiftDigital         []UpdateDataGiftDigital `validate:"required,dive,required"`
-	GuestBook           []UpdateDataGuestBook   `validate:"required,dive,required"`
-	HalamanUtamaGallery []*multipart.FileHeader `validate:"required,valid-image" `
-	GalleryPhotos       []*multipart.FileHeader `validate:"required,valid-image"`
-	Subdomain           string                  `validate:"required"`
-	PremiumDomain       string
-	HalamanUtamaJSON    []UpdateDataGalleryPhotos
-	GalleryPhotoJSON    []UpdateDataGalleryPhotos
-}
-
-type UpdateDataGalleryPhotos struct {
-	ID       uuid.UUID `json:"id" validate:"required"`
-	Namefile string    `json:"namefile" validate:"required"`
-	Order    int       `json:"order" validate:"required"`
+	Mempelai    UpdateDataMempelai      `json:"Mempelai" `
+	Acara       []UpdateDataAcara       `json:"Acara"`
+	LoveStory   []UpdateDataLoveStory   `json:"LoveStory"`
+	GiftDigital []UpdateDataGiftDigital `json:"GiftDigital"`
+	GuestBook   []UpdateDataGuestBook   `json:"GuestBook"`
+	Domain      UpdateDomain            `json:"Domain"`
+	Gallery     []UpdateGallery         `json:"Gallery"`
 }
 
 type UpdateDataMempelai struct {
-	MempelaiPria   UpdateMempelai `json:"mempelai_pria" validate:"required"`
-	MempelaiWanita UpdateMempelai `json:"mempelai_wanita" validate:"required"`
+	MempelaiPria   UpdateMempelai `json:"mempelai_pria" `
+	MempelaiWanita UpdateMempelai `json:"mempelai_wanita" `
 }
 
 type UpdateDataAcara struct {
-	ID uuid.UUID `json:"id" validate:"required"`
-	DataAcara
+	ID        uuid.UUID `json:"id"`
+	Title     string    `json:"title" `
+	StartDate time.Time `json:"start_date" `
+	EndDate   time.Time `json:"end_date" `
+	Location  string    `json:"location" `
+	Place     string    `json:"place" `
+	Order     int       `json:"order" `
 }
 
 type UpdateDataLoveStory struct {
-	ID uuid.UUID `json:"id" validate:"required"`
-	DataLoveStory
+	ID       uuid.UUID `json:"id"`
+	Title    string    `json:"title" `
+	Location string    `json:"location" `
+	Story    string    `json:"story" `
+	Order    int       `json:"order" `
 }
 
 type UpdateDataGiftDigital struct {
-	ID uuid.UUID `json:"id" validate:"required"`
-	DataGiftDigital
+	ID           uuid.UUID `json:"id"`
+	NoRekening   string    `json:"no_rekening" `
+	PaymentType  string    `json:"payment_type" `
+	NameRekening string    `json:"nama_rekening" `
+	Order        int       `json:"order" `
 }
 
 type UpdateDataGuestBook struct {
-	Group          string            `json:"group" validate:"required"`
-	Order          int               `json:"order" validate:"required"`
-	DatasGuestBook []UpdateGuestBook `json:"data_guestbook" validate:"required,dive,required"`
+	Group          string            `json:"group" `
+	Order          int               `json:"order" `
+	DatasGuestBook []UpdateGuestBook `json:"data_guestbook"`
 }
 
 type UpdateGuestBook struct {
-	ID uuid.UUID `json:"id" validate:"required"`
-	GuestBook
+	ID      uuid.UUID `json:"id"`
+	Name    string    `json:"name" `
+	Phone   string
+	Message string
 }
 type UpdateMempelai struct {
-	ID uuid.UUID `json:"id" validate:"required"`
-	Mempelai
+	ID         uuid.UUID `json:"id"`
+	IsLeft     bool      `json:"is_left" `
+	NameAlias  string    `json:"namealias" `
+	Fullname   string    `json:"fullname" `
+	NameFather string    `json:"namefather" `
+	NameMother string    `json:"namemother" `
+}
+
+type UpdateGallery struct {
+	ID             uuid.UUID `json:"id"`
+	Filename       string    `json:"filename"`
+	Order          int       `json:"order"`
+	IsGallery      bool      `json:"is_gallery"`
+	IsHalamanUtama bool      `json:"is_halaman_utama"`
+}
+
+type UpdateDomain struct {
+	ID            uuid.UUID `json:"id"`
+	Subdomain     string    `json:"Subdomain"`
+	PremiumDomain string    `json:"PremiumDomain"`
 }

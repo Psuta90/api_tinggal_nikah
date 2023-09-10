@@ -8,6 +8,7 @@ import (
 
 type AcaraRepository interface {
 	CreateAcara(acara *[]models.Acara) error
+	UpdateAcara(acara *models.Acara, errChan chan error)
 }
 
 type AcaraRepositoryImpl struct {
@@ -23,7 +24,13 @@ func (ar *AcaraRepositoryImpl) CreateAcara(acara *[]models.Acara) error {
 	return result.Error
 }
 
-// func (ar *AcaraRepositoryImpl) UpdateAcara(acara *models.Acara) error {
-// 	result := ar.tx.Model(models.Acara{}).Where("id = ?", acara.ID)
-// 	return result.Error
-// }
+func (ar *AcaraRepositoryImpl) UpdateAcara(acara *models.Acara, errChan chan error) {
+	result := ar.tx.Model(&acara).Updates(&acara)
+
+	if result.Error != nil {
+		errChan <- result.Error
+	}
+
+	errChan <- nil
+
+}

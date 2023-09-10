@@ -22,6 +22,7 @@ func main() {
 	e := echo.New()
 
 	db.InitDB()
+	db.InitRedisConnection()
 
 	e.Validator = utils.NewCustomValidator()
 

@@ -8,6 +8,7 @@ import (
 
 type GalleryPhotosRepository interface {
 	CreateGalleryPhotos(gallery *[]models.GalleryPhotos) error
+	UpdateGalleryPhotos(gallery models.GalleryPhotos, errChan chan error)
 }
 
 type GalleryPhotosRepositoryImpl struct {
@@ -21,4 +22,14 @@ func NewGalleryPhotosRepository(tx *gorm.DB) GalleryPhotosRepository {
 func (gp *GalleryPhotosRepositoryImpl) CreateGalleryPhotos(gallery *[]models.GalleryPhotos) error {
 	result := gp.tx.Create(gallery)
 	return result.Error
+}
+
+func (gp *GalleryPhotosRepositoryImpl) UpdateGalleryPhotos(gallery models.GalleryPhotos, errChan chan error) {
+
+	result := gp.tx.Model(&gallery).Updates(&gallery)
+	if result.Error != nil {
+		errChan <- result.Error
+	}
+
+	errChan <- nil
 }

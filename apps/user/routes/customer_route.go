@@ -27,5 +27,5 @@ func CustomerRoutes(r *echo.Group, enforcer *casbin.Enforcer) {
 
 	v1.POST("/addWedding", controller.AddWedding)
 	v1.PATCH("/updateWedding", controller.UpdateWedding)
-
+	v1.POST("/upload", controller.UploadFile)
 }

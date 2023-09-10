@@ -8,6 +8,7 @@ import (
 
 type MempelaiWanitaRepository interface {
 	CreateMempelaiWanita(mempelaiWanita *models.MempelaiWanita) error
+	UpdateMempelaiWanita(mempelaiWanita *models.MempelaiWanita) error
 }
 
 type MempelaiWanitaRepositoryImpl struct {
@@ -20,5 +21,10 @@ func NewMempelaiWanitaRepository(tx *gorm.DB) MempelaiWanitaRepository {
 
 func (mpr *MempelaiWanitaRepositoryImpl) CreateMempelaiWanita(mempelaiWanita *models.MempelaiWanita) error {
 	result := mpr.tx.Create(mempelaiWanita)
+	return result.Error
+}
+
+func (mpr *MempelaiWanitaRepositoryImpl) UpdateMempelaiWanita(mempelaiWanita *models.MempelaiWanita) error {
+	result := mpr.tx.Model(&mempelaiWanita).Updates(&mempelaiWanita)
 	return result.Error
 }

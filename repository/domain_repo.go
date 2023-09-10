@@ -8,7 +8,7 @@ import (
 
 type DomainRepository interface {
 	CreateDomain(domain *models.Domain) error
-	UpdateDomain(ch chan *models.Domain) error
+	UpdateDomain(domain *models.Domain) error
 }
 
 type DomainRepositoryImpl struct {
@@ -25,6 +25,7 @@ func (dr *DomainRepositoryImpl) CreateDomain(domain *models.Domain) error {
 	return result.Error
 }
 
-func (dr *DomainRepositoryImpl) UpdateDomain(ch chan *models.Domain) error {
-	return nil
+func (dr *DomainRepositoryImpl) UpdateDomain(domain *models.Domain) error {
+	result := dr.tx.Model(&domain).Where("id = ?", domain.ID).Updates(domain)
+	return result.Error
 }
