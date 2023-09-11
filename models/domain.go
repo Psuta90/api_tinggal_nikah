@@ -10,5 +10,5 @@ type Domain struct {
 	ID            uuid.UUID `gorm:"default:uuid_generate_v4();primaryKey"`
 	Subdomain     string
 	PremiumDomain string
-	UserID        uuid.UUID
+	UserID        uuid.UUID `gorm:"unique"`
 }

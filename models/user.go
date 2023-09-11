@@ -22,6 +22,7 @@ type User struct {
 	MempelaiWanita MempelaiWanita  `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	GiftDigital    []GiftDigital   `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Domain         Domain          `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	TemplateUser   TemplateUser    `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 type RoleStatus string

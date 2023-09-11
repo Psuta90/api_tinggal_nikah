@@ -68,6 +68,7 @@ func AddWedding(c echo.Context) error {
 		PremiumDomain:       data.PremiumDomain,
 		HalamanUtamaGallery: filesHalamanUtama,
 		GalleryPhotos:       filesGalleryPhoto,
+		Template:            data.Template,
 	}
 
 	if err := utils.Validation(c, wjs); err != nil {

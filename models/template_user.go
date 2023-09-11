@@ -5,13 +5,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type MempelaiPria struct {
+type TemplateUser struct {
 	gorm.Model
 	ID         uuid.UUID `gorm:"default:uuid_generate_v4();primaryKey"`
-	NameAlias  string
-	FullName   string
-	NameFather string
-	NameMother string
-	IsLeft     bool
+	TemplateID uuid.UUID
 	UserID     uuid.UUID `gorm:"unique"`
 }

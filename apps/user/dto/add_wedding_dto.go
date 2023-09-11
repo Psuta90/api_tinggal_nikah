@@ -3,16 +3,19 @@ package dto
 import (
 	"mime/multipart"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type AddWeddingDto struct {
-	MempelaiJSONSTR    string `form:"mempelai" json:"mempelai"`
-	AcaraJSONSTR       string `form:"acara" json:"acara"`
-	LoveStoryJSONSTR   string `form:"lovestory" json:"lovestory"`
-	GiftDigitalJSONSTR string `form:"gift_digital" json:"gift_digital"`
-	GusetBookJSONSTR   string `form:"guest_book" json:"guest_book"`
-	Subdomain          string `form:"subdomain"`
-	PremiumDomain      string `form:"premiumdomain"`
+	MempelaiJSONSTR    string    `form:"mempelai" json:"mempelai"`
+	AcaraJSONSTR       string    `form:"acara" json:"acara"`
+	LoveStoryJSONSTR   string    `form:"lovestory" json:"lovestory"`
+	GiftDigitalJSONSTR string    `form:"gift_digital" json:"gift_digital"`
+	GusetBookJSONSTR   string    `form:"guest_book" json:"guest_book"`
+	Subdomain          string    `form:"subdomain"`
+	PremiumDomain      string    `form:"premiumdomain"`
+	Template           uuid.UUID `form:"template"`
 }
 
 type AddWeddingJSON struct {
@@ -25,6 +28,7 @@ type AddWeddingJSON struct {
 	GalleryPhotos       []*multipart.FileHeader `validate:"required,valid-image"`
 	Subdomain           string                  `validate:"required"`
 	PremiumDomain       string
+	Template            uuid.UUID `validate:"required"`
 }
 
 type DataMempelai struct {

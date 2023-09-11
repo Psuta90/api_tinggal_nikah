@@ -5,7 +5,7 @@ import (
 	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/db"
 	"api_tinggal_nikah/models"
-	"api_tinggal_nikah/repository"
+	repository "api_tinggal_nikah/repository/wedding"
 	"api_tinggal_nikah/utils"
 	"fmt"
 	"io"
@@ -34,6 +34,7 @@ func AddWeddingService(c echo.Context, data *dto.AddWeddingJSON) error {
 	MempelaiWanitaRepo := repository.NewMempelaiWanitaRepository(conn)
 	DomainRepo := repository.NewDomainRepository(conn)
 	GalleryRepo := repository.NewGalleryPhotosRepository(conn)
+	TemplateUserRepo := repository.NewTemplateUserRepository(conn)
 
 	acaras := []models.Acara{}
 	lovestorys := []models.LoveStory{}
@@ -63,6 +64,11 @@ func AddWeddingService(c echo.Context, data *dto.AddWeddingJSON) error {
 		Subdomain:     data.Subdomain,
 		PremiumDomain: data.PremiumDomain,
 		UserID:        user_id,
+	}
+
+	template := &models.TemplateUser{
+		TemplateID: data.Template,
+		UserID:     user_id,
 	}
 
 	AcaraChannel := make(chan models.Acara)
@@ -305,6 +311,12 @@ func AddWeddingService(c echo.Context, data *dto.AddWeddingJSON) error {
 		return utils.NewAPIResponse(c).FailedInsertDB(0, "gagal pada saat insert data domain", nil)
 	}
 
+	if err := TemplateUserRepo.CreateTemplateUser(template); err != nil {
+		conn.Rollback()
+		fmt.Println(err)
+		return utils.NewAPIResponse(c).FailedInsertDB(0, "gagal pada saat insert template", nil)
+	}
+
 	if err := GalleryRepo.CreateGalleryPhotos(&gallery); err != nil {
 		conn.Rollback()
 		fmt.Println(err)
@@ -406,6 +418,7 @@ func UdateWeddingService(c echo.Context, data *dto.UpdateWeddingDto) error {
 	LoveStoryRepo := repository.NewLoveStoryRepository(conn)
 	GifDigitalRepo := repository.NewGiftDigitalRepository(conn)
 	GuestBookRepo := repository.NewGuestBookRepository(conn)
+	TemplateUserRepo := repository.NewTemplateUserRepository(conn)
 
 	MempelaiPria := &models.MempelaiPria{
 		ID:         data.Mempelai.MempelaiPria.ID,
@@ -429,6 +442,11 @@ func UdateWeddingService(c echo.Context, data *dto.UpdateWeddingDto) error {
 		ID:            data.Domain.ID,
 		Subdomain:     data.Domain.Subdomain,
 		PremiumDomain: data.Domain.PremiumDomain,
+	}
+
+	template := &models.TemplateUser{
+		ID:         data.Template.ID,
+		TemplateID: data.Template.TemplateID,
 	}
 
 	gallery := make(chan error)
@@ -588,6 +606,13 @@ func UdateWeddingService(c echo.Context, data *dto.UpdateWeddingDto) error {
 		if errGuestBook != nil {
 			conn.Rollback()
 			return utils.NewAPIResponse(c).Error(0, "gagal update GuestBook", errGuestBook.Error())
+		}
+	}
+
+	if data.Template != (dto.UpdateTemplateUser{}) {
+		if err := TemplateUserRepo.UpdateTemplateUser(template); err != nil {
+			conn.Rollback()
+			return utils.NewAPIResponse(c).Error(0, "gagal update Template", err)
 		}
 	}
 

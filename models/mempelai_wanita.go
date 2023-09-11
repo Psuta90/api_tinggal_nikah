@@ -13,5 +13,5 @@ type MempelaiWanita struct {
 	NameFather string    `json:"namefather"`
 	NameMother string    `json:"namemother"`
 	IsLeft     bool
-	UserID     uuid.UUID
+	UserID     uuid.UUID `gorm:"unique"`
 }

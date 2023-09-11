@@ -36,6 +36,9 @@ func main() {
 		&migration.CreatePackageCategory{},
 		&migration.CreatePackageTable{},
 		&migration.CreateDomainTable{},
+		&migration.TemplateMasterTable{},
+		&migration.TemplateType{},
+		&migration.TemplateUser{},
 		// Add other migration instances here if needed
 	}
 	for _, m := range migrations {

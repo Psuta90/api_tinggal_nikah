@@ -14,8 +14,13 @@ type UpdateWeddingDto struct {
 	GuestBook   []UpdateDataGuestBook   `json:"GuestBook"`
 	Domain      UpdateDomain            `json:"Domain"`
 	Gallery     []UpdateGallery         `json:"Gallery"`
+	Template    UpdateTemplateUser      `json:"Template"`
 }
 
+type UpdateTemplateUser struct {
+	ID         uuid.UUID `json:"id"`
+	TemplateID uuid.UUID `json:"TemplateID"`
+}
 type UpdateDataMempelai struct {
 	MempelaiPria   UpdateMempelai `json:"mempelai_pria" `
 	MempelaiWanita UpdateMempelai `json:"mempelai_wanita" `
