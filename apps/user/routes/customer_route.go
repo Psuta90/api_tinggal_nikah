@@ -16,16 +16,10 @@ func CustomerRoutes(r *echo.Group, enforcer *casbin.Enforcer) {
 	v1.Use(echojwt.WithConfig(config.ConfigJwt()))
 	v1.Use(middleware.CasbinMiddleware(enforcer))
 
-	//route for test rbac
-	// v1.GET("/listuser", func(c echo.Context) error {
-	// 	return c.String(http.StatusOK, "Hello, World!")
-	// })
-	// v1.POST("/postuser", func(c echo.Context) error {
-	// 	return c.String(http.StatusOK, "Hello, World!")
-	// })
-	//end route test rbac
-
 	v1.POST("/addWedding", controller.AddWedding)
 	v1.PATCH("/updateWedding", controller.UpdateWedding)
 	v1.POST("/upload", controller.UploadFile)
+	v1.GET("/getWedding", controller.GetWedding)
+	v1.DELETE("/deleteWedding", controller.DeleteWedding)
+	// v1.POST("/testnats", controller.TestNats)
 }

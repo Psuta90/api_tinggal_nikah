@@ -1,0 +1,12 @@
+package routes
+
+import (
+	"api_tinggal_nikah/apps/user/controller"
+
+	"github.com/labstack/echo/v4"
+)
+
+func GlobalRoutes(r *echo.Group) {
+	v1 := r.Group("/global")
+	v1.GET("/alltemplates", controller.GetAllTemplates)
+}

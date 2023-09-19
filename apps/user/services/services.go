@@ -5,7 +5,7 @@ import (
 	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/db"
 	"api_tinggal_nikah/models"
-	repository "api_tinggal_nikah/repository/wedding"
+	"api_tinggal_nikah/repository"
 	"api_tinggal_nikah/utils"
 	"fmt"
 	"io"
@@ -15,6 +15,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
+	"github.com/samber/lo"
 )
 
 func AddWeddingService(c echo.Context, data *dto.AddWeddingJSON) error {
@@ -643,4 +644,86 @@ func UdateWeddingService(c echo.Context, data *dto.UpdateWeddingDto) error {
 
 	return utils.NewAPIResponse(c).Success(0, "", data)
 
+}
+
+func GetWeddingService(c echo.Context) error {
+
+	conn := db.GetDB()
+	user_id := c.Get("JWT").(*jwt.Token).Claims.(*config.JwtCustomClaims).ID
+
+	UserRepo := repository.NewUserRepository(conn)
+
+	data, err := UserRepo.GetWeddingUser(user_id)
+	if err != nil {
+		return utils.NewAPIResponse(c).Error(0, "error get data", data)
+	}
+
+	nm, err := utils.StructToMap(data)
+	if err != nil {
+		return err
+	}
+
+	datares := lo.OmitByKeys(nm, []string{"Password", "Role"})
+
+	return utils.NewAPIResponse(c).Success(0, "Berhasil Mendapatkan Data", &datares)
+}
+
+func GetAllTemplatesService(c echo.Context) error {
+
+	conn := db.GetDB()
+	TypeTemplateRepo := repository.NewTemplateTypeRepository(conn)
+
+	data, err := TypeTemplateRepo.GetAllTemplateType()
+
+	if err != nil {
+		return utils.NewAPIResponse(c).Error(0, "data tidak di temukan", nil)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success", data)
+
+}
+
+func AddPackagesService(c echo.Context, data *dto.AddPackagesDto) error {
+
+	conn := db.GetDB()
+
+	packages := &models.Package{
+		GuestSize:         data.GuestSize,
+		GallerySize:       data.GallerySize,
+		VideoSize:         data.VideoSize,
+		RSVP:              data.RSVP,
+		LocationLink:      data.LocationLink,
+		Story:             data.Story,
+		GiftDigital:       data.GiftDigital,
+		Music:             data.Music,
+		PackageCategoryID: data.PackageCategoryID,
+	}
+
+	PackageRepo := repository.NewPackagesRepository(conn)
+
+	if err := PackageRepo.CreatePackage(packages); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal create package", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success create packages ", data)
+}
+
+func AddPackagesCategoryService(c echo.Context, data *dto.AddPackagesCategorysDto) error {
+
+	conn := db.GetDB()
+
+	package_category := &models.PackageCategory{
+		Name:               data.Name,
+		Price:              data.Price,
+		DiscountPercentage: data.DiscountPercentage,
+		ActiveDays:         data.ActiveDays,
+	}
+
+	PackageCategoryRepo := repository.NewPackageCategoryRepository(conn)
+
+	if err := PackageCategoryRepo.CreatePackageCategory(package_category); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal create package category", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success create packages category", data)
 }

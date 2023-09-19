@@ -5,6 +5,7 @@ import (
 	"api_tinggal_nikah/models"
 	"errors"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -13,6 +14,7 @@ type UserRepository interface {
 	GetUserByID(id uint) (*models.User, error)
 	BeforeCreateUser(user *models.User) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)
+	GetWeddingUser(user_id uuid.UUID) (models.User, error)
 	// Add more methods as needed
 }
 
@@ -54,4 +56,27 @@ func (ur *UserRepositoryImpl) BeforeCreateUser(user *models.User) (*models.User,
 	}
 
 	return user, errors.New("user sudah ada")
+}
+
+func (ur *UserRepositoryImpl) GetWeddingUser(user_id uuid.UUID) (models.User, error) {
+	users := new(models.User)
+	result := ur.tx.
+		Preload("Acara").
+		Preload("GalleryPhotos").
+		Preload("GalleryPhotos").
+		Preload("LoveStory").
+		Preload("GuestBook").
+		Preload("MempelaiPria").
+		Preload("MempelaiWanita").
+		Preload("GiftDigital").
+		Preload("Domain").
+		Preload("TemplateUser").
+		Where("users.id = ?", user_id).Find(users)
+
+	if result.Error != nil {
+		return *users, result.Error
+	}
+
+	return *users, nil
+
 }

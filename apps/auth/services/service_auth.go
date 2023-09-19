@@ -5,7 +5,7 @@ import (
 	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/db"
 	"api_tinggal_nikah/models"
-	repository "api_tinggal_nikah/repository/user"
+	"api_tinggal_nikah/repository"
 	"api_tinggal_nikah/utils"
 	"errors"
 	"time"

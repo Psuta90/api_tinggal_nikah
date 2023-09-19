@@ -16,5 +16,5 @@ type Package struct {
 	Story             bool
 	GiftDigital       bool
 	Music             bool
-	PackageCategoryID uuid.UUID
+	PackageCategoryID uuid.UUID `gorm:"unique"`
 }

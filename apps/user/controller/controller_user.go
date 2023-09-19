@@ -111,3 +111,21 @@ func UploadFile(c echo.Context) error {
 
 	return services.UploadFileService(c, data)
 }
+
+func GetWedding(c echo.Context) error {
+	return services.GetWeddingService(c)
+}
+
+func DeleteWedding(c echo.Context) error {
+	return utils.NewAPIResponse(c).Success(0, "route untuk delete", nil)
+}
+
+// func TestNats(c echo.Context) error {
+// 	message := "Hello, NATS JetStream!"
+
+// 	if err := messagebroker.NatsConn.Publish("payment", []byte(message)); err != nil {
+// 		return c.String(http.StatusInternalServerError, "Failed to publish message to NATS JetStream")
+// 	}
+
+// 	return c.String(http.StatusOK, "Message published to NATS JetStream")
+// }

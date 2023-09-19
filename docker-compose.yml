@@ -28,7 +28,22 @@ services:
     depends_on :
       - postgres
       - api_tinggal_nikah_auth
+
   
+  api_tinggal_nikah_payment : 
+    build:
+      context: ./apps/payment
+      dockerfile: Dockerfile
+    ports :
+      - 3002:3002
+    volumes : 
+      - ./:/app
+    env_file :
+      - ./apps/payment/.env.local
+    command: bash -c "go mod tidy && air -c .air.toml"
+    depends_on :
+      - postgres
+
   postgres:
     image: postgres:latest
     environment:
@@ -48,3 +63,15 @@ services:
     command: redis-server --save 20 1 --loglevel warning
     volumes: 
       - ./redis:/data
+      
+  nats:
+    image: nats
+    ports:
+      - "8222:8222"
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222 "
+  nats-1:
+    image: nats
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+  nats-2:
+    image: nats
+    command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
