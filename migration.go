@@ -40,6 +40,7 @@ func main() {
 		&migration.TemplateType{},
 		&migration.TemplateUser{},
 		&migration.CreateUsersTransactionTable{},
+		&migration.CreateUsersPackage{},
 		// Add other migration instances here if needed
 	}
 	for _, m := range migrations {

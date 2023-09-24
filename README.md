@@ -8,9 +8,11 @@
 
 
 
+## Extension Postgresql
+- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 ## ENUM POSTGRESQL
- - CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
  - CREATE TYPE role_status AS ENUM ('admin', 'customer');
+ - CREATE TYPE status_payment AS ENUM ('PAID', 'FAILED', 'EXPIRED', 'REFUND');
 
 ## migration
  - change env on root file DATABASE_URL with your database

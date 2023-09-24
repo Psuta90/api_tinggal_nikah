@@ -9,20 +9,22 @@ import (
 
 type User struct {
 	gorm.Model
-	ID             uuid.UUID `gorm:"default:uuid_generate_v4();primaryKey"`
-	FullName       string
-	Email          string
-	Password       string
-	Role           RoleStatus      `gorm:"type:role_status"`
-	Acara          []Acara         `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	GalleryPhotos  []GalleryPhotos `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	LoveStory      []LoveStory     `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	GuestBook      []GuestBook     `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	MempelaiPria   MempelaiPria    `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	MempelaiWanita MempelaiWanita  `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	GiftDigital    []GiftDigital   `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Domain         Domain          `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	TemplateUser   TemplateUser    `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	ID              uuid.UUID `gorm:"default:uuid_generate_v4();primaryKey"`
+	FullName        string
+	Email           string
+	Password        string
+	Role            RoleStatus        `gorm:"type:role_status"`
+	Acara           []Acara           `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	GalleryPhotos   []GalleryPhotos   `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	LoveStory       []LoveStory       `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	GuestBook       []GuestBook       `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	MempelaiPria    MempelaiPria      `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	MempelaiWanita  MempelaiWanita    `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	GiftDigital     []GiftDigital     `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Domain          Domain            `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	TemplateUser    TemplateUser      `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserTransaction []UserTransaction `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	UserPackage     []UserPackage     `gorm:"foreignKey:UserID;references:ID; constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type RoleStatus string

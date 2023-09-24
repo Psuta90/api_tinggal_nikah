@@ -69,7 +69,7 @@ func (c *APIResponse) Error(status int, message string, data interface{}) error 
 	if data != nil {
 		dataResponse.Data = data
 	} else {
-		dataResponse.Data = echo.Map{}
+		dataResponse.Data = data
 	}
 
 	return c.c.JSON(dataResponse.Status, &dataResponse)
@@ -93,7 +93,7 @@ func (c *APIResponse) FailedInsertDB(status int, message string, data interface{
 	if data != nil {
 		dataResponse.Data = data
 	} else {
-		dataResponse.Data = echo.Map{}
+		dataResponse.Data = data
 	}
 
 	return c.c.JSON(dataResponse.Status, &dataResponse)
