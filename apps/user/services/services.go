@@ -14,6 +14,7 @@ import (
 	"strconv"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 )
@@ -726,4 +727,98 @@ func AddPackagesCategoryService(c echo.Context, data *dto.AddPackagesCategorysDt
 	}
 
 	return utils.NewAPIResponse(c).Success(0, "success create packages category", data)
+}
+
+func UpdatePackagesService(c echo.Context, data *dto.UpdatePackagesDto) error {
+	conn := db.GetDB()
+
+	packages := &models.Package{
+		ID:                data.ID,
+		GuestSize:         data.GuestSize,
+		GallerySize:       data.GallerySize,
+		VideoSize:         data.VideoSize,
+		RSVP:              data.RSVP,
+		LocationLink:      data.LocationLink,
+		Story:             data.Story,
+		GiftDigital:       data.GiftDigital,
+		Music:             data.Music,
+		PackageCategoryID: data.PackageCategoryID,
+	}
+
+	PackageRepo := repository.NewPackagesRepository(conn)
+
+	if err := PackageRepo.UpdatePackage(packages); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal update package", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success update packages", data)
+}
+
+func UpdatePackagesCategoryService(c echo.Context, data *dto.UpdatePackagesCategorysDto) error {
+
+	conn := db.GetDB()
+
+	PackageCategory := &models.PackageCategory{
+		ID:                 data.ID,
+		Name:               data.Name,
+		Price:              data.Price,
+		DiscountPercentage: data.DiscountPercentage,
+		ActiveDays:         data.ActiveDays,
+	}
+
+	PackageCategoryRepo := repository.NewPackageCategoryRepository(conn)
+
+	if err := PackageCategoryRepo.UpdatePackageCategory(PackageCategory); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal update package", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success update packages category", data)
+
+}
+
+func DeletePackagesService(c echo.Context, id uuid.UUID) error {
+
+	conn := db.GetDB()
+
+	packages := &models.Package{
+		ID: id,
+	}
+
+	PackageRepo := repository.NewPackagesRepository(conn)
+
+	if err := PackageRepo.DeletePackage(packages); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal deleted package", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success delete packages", id)
+}
+
+func DeletePackageCategoryService(c echo.Context, id uuid.UUID) error {
+
+	conn := db.GetDB()
+
+	PackageCategory := &models.PackageCategory{
+		ID: id,
+	}
+
+	PackageCategoryRepo := repository.NewPackageCategoryRepository(conn)
+
+	if err := PackageCategoryRepo.DeletePackageCategory(PackageCategory); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal deleted package category", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success delete packages", id)
+}
+
+func GetAllPackagesServices(c echo.Context) error {
+
+	conn := db.GetDB()
+	PackageCategoryRepo := repository.NewPackageCategoryRepository(conn)
+
+	data, err := PackageCategoryRepo.GetAllPackageCategory()
+	if err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal mendapatkan data package category", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "api untuk get all packages", data)
 }

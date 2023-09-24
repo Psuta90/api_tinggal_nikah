@@ -9,4 +9,5 @@ import (
 func GlobalRoutes(r *echo.Group) {
 	v1 := r.Group("/global")
 	v1.GET("/alltemplates", controller.GetAllTemplates)
+	v1.GET("/allpackages", controller.GetAllPackages)
 }

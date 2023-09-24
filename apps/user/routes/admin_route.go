@@ -18,4 +18,8 @@ func AdminRoutes(r *echo.Group, enforcer *casbin.Enforcer) {
 
 	v1.POST("/addPackages", controller.AddPackages)
 	v1.POST("/addPackagesCategorys", controller.AddPackagesCategorys)
+	v1.PATCH("/updatePackages/:id", controller.UpdatePackages)
+	v1.PATCH("/updatePackagesCategorys/:id", controller.UpdatePackagesCategorys)
+	v1.DELETE("/deletePackages/:id", controller.DeletePackages)
+	v1.DELETE("/deletePackagesCategorys/:id", controller.DeletePackageCategory)
 }

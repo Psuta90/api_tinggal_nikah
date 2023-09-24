@@ -9,3 +9,7 @@ import (
 func GetAllTemplates(c echo.Context) error {
 	return services.GetAllTemplatesService(c)
 }
+
+func GetAllPackages(c echo.Context) error {
+	return services.GetAllPackagesServices(c)
+}
