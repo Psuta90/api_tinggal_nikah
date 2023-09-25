@@ -4,6 +4,7 @@ import (
 	"api_tinggal_nikah/apps/payment/dto"
 	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/db"
+	messagebroker "api_tinggal_nikah/message_broker"
 	"api_tinggal_nikah/models"
 	"api_tinggal_nikah/repository"
 	"api_tinggal_nikah/utils"
@@ -121,14 +122,14 @@ func ListPaymentChannelService(c echo.Context) error {
 
 func CallBackTripayService(c echo.Context, data *dto.ResponseCallbackTripayDto) error {
 
-	fmt.Println("masuk servcie")
-
-	conn := db.GetDB()
+	conn := db.GetDB().Begin()
 	UserTransactionRepo := repository.NewUserTransactionRepository(conn)
+	UserPackageRepo := repository.NewUserPackageRepository(conn)
+	PackageCategoryRepo := repository.NewPackageCategoryRepository(conn)
 
 	userTransaction, err := UserTransactionRepo.FindOneByOrderID(data.MerchantRef)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{
+		return c.JSON(http.StatusOK, echo.Map{
 			"success": false,
 			"message": "Order ID Not Found",
 		})
@@ -136,7 +137,7 @@ func CallBackTripayService(c echo.Context, data *dto.ResponseCallbackTripayDto) 
 
 	resJsonCallbackStr, err := utils.StructToMap(data)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{
+		return c.JSON(http.StatusOK, echo.Map{
 			"success": false,
 			"message": "gagal stringfy json to save in database",
 		})
@@ -146,7 +147,59 @@ func CallBackTripayService(c echo.Context, data *dto.ResponseCallbackTripayDto) 
 	userTransaction.ResponseTripay = resJsonCallbackStr
 
 	if err := UserTransactionRepo.UpdateByOrderID(userTransaction); err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{
+		conn.Rollback()
+		fmt.Println(err.Error())
+
+		return c.JSON(http.StatusOK, echo.Map{
+			"success": false,
+		})
+	}
+
+	if data.Status == string(models.PAID) {
+
+		PackageCategory, err := PackageCategoryRepo.FindOnePackageCategory(userTransaction.PackageCategoryID)
+		if err != nil {
+			conn.Rollback()
+			fmt.Println(err.Error())
+			return c.JSON(http.StatusOK, echo.Map{
+				"success": false,
+				"message": err.Error(),
+			})
+		}
+
+		UserPackage := &models.UserPackage{
+			UserTransactionID: userTransaction.ID,
+			UserID:            userTransaction.UserID,
+			PackageCategoryID: PackageCategory.ID,
+			StartDate:         time.Now(),
+			EndDate:           time.Now().AddDate(0, 0, PackageCategory.ActiveDays),
+			IsActive:          true,
+		}
+
+		if err := UserPackageRepo.Create(UserPackage); err != nil {
+			conn.Rollback()
+			fmt.Println(err.Error())
+			return c.JSON(http.StatusOK, echo.Map{
+				"success": false,
+				"message": err.Error(),
+			})
+
+		}
+	}
+
+	msg := echo.Map{
+		"order_id": userTransaction.OrderID,
+		"status":   data.Status,
+	}
+
+	payload, _ := json.Marshal(msg)
+
+	subjectNats := "payment.status." + userTransaction.OrderID
+
+	messagebroker.NatsConn.Publish(subjectNats, payload)
+
+	if err := conn.Commit().Error; err != nil {
+		return c.JSON(http.StatusOK, echo.Map{
 			"success": false,
 			"message": err.Error(),
 		})

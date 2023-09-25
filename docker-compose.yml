@@ -44,6 +44,20 @@ services:
     depends_on :
       - postgres
 
+  api_tinggal_nikah_socket : 
+    build:
+      context: ./apps/socket
+      dockerfile: Dockerfile
+    ports :
+      - 3003:3003
+    volumes : 
+      - ./:/app
+    env_file :
+      - ./apps/socket/.env.local
+    command: bash -c "go mod tidy && air -c .air.toml"
+    depends_on :
+      - postgres
+
   postgres:
     image: postgres:latest
     environment:

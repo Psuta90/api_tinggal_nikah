@@ -3,6 +3,7 @@ package repository
 import (
 	"api_tinggal_nikah/models"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -11,6 +12,7 @@ type PackageCategoryRepository interface {
 	UpdatePackageCategory(packagecategory *models.PackageCategory) error
 	DeletePackageCategory(packagecategory *models.PackageCategory) error
 	GetAllPackageCategory() ([]models.PackageCategory, error)
+	FindOnePackageCategory(id uuid.UUID) (models.PackageCategory, error)
 }
 
 type PackageCategoryRepositoryImpl struct {
@@ -39,5 +41,11 @@ func (pc *PackageCategoryRepositoryImpl) DeletePackageCategory(packagecategory *
 func (pc *PackageCategoryRepositoryImpl) GetAllPackageCategory() ([]models.PackageCategory, error) {
 	packagecategory := new([]models.PackageCategory)
 	result := pc.tx.Preload("Package").Find(packagecategory)
+	return *packagecategory, result.Error
+}
+
+func (pc *PackageCategoryRepositoryImpl) FindOnePackageCategory(id uuid.UUID) (models.PackageCategory, error) {
+	packagecategory := new(models.PackageCategory)
+	result := pc.tx.First(&packagecategory, "id = ?", id)
 	return *packagecategory, result.Error
 }

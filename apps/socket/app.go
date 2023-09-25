@@ -1,7 +1,7 @@
 package main
 
 import (
-	"api_tinggal_nikah/apps/payment/routes"
+	"api_tinggal_nikah/apps/socket/routes"
 	"api_tinggal_nikah/db"
 	messagebroker "api_tinggal_nikah/message_broker"
 	"path"
