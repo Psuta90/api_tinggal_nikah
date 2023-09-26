@@ -675,12 +675,29 @@ func GetAllTemplatesService(c echo.Context) error {
 	TypeTemplateRepo := repository.NewTemplateTypeRepository(conn)
 
 	data, err := TypeTemplateRepo.GetAllTemplateType()
-
 	if err != nil {
 		return utils.NewAPIResponse(c).Error(0, "data tidak di temukan", nil)
 	}
 
-	return utils.NewAPIResponse(c).Success(0, "success", data)
+	datares := lo.Map(data, func(typeTemplate models.TypeTemplate, index int) map[string]interface{} {
+
+		OmitedTemplateMaster := lo.Map(typeTemplate.TemplateMaster, func(tm models.TemplateMaster, index2 int) map[string]interface{} {
+
+			nm, _ := utils.StructToMap(tm)
+			omit := lo.OmitByKeys(nm, []string{"TemplateUser"})
+			return omit
+		})
+
+		data := echo.Map{
+			"ID":             typeTemplate.ID,
+			"Name":           typeTemplate.Name,
+			"TemplateMaster": OmitedTemplateMaster,
+		}
+
+		return data
+	})
+
+	return utils.NewAPIResponse(c).Success(0, "success", datares)
 
 }
 
@@ -821,4 +838,70 @@ func GetAllPackagesServices(c echo.Context) error {
 	}
 
 	return utils.NewAPIResponse(c).Success(0, "api untuk get all packages", data)
+}
+
+func AddTypeTemplateServices(c echo.Context, data *dto.AddTypeTemplateDto) error {
+	conn := db.GetDB()
+	TypeTemplateRepo := repository.NewTemplateTypeRepository(conn)
+
+	typeTemplate := &models.TypeTemplate{
+		Name: data.Name,
+	}
+
+	if err := TypeTemplateRepo.AddTypeTemplate(typeTemplate); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal insert template type", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success add template type", nil)
+}
+
+func UpdateTypeTemplateServices(c echo.Context, data *dto.UpdateTypeTemplateDto) error {
+	conn := db.GetDB()
+	TypeTemplateRepo := repository.NewTemplateTypeRepository(conn)
+
+	typeTemplate := &models.TypeTemplate{
+		Name: data.Name,
+		ID:   data.ID,
+	}
+
+	if err := TypeTemplateRepo.UpdateTypeTemplate(typeTemplate); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal insert template type", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success add template type", nil)
+}
+
+func AddTemplateMasterService(c echo.Context, data *dto.AddTemplateMasterDto) error {
+
+	conn := db.GetDB()
+	TemplateMasterRepo := repository.NewTemplateMasterRepository(conn)
+
+	TemplateMaster := &models.TemplateMaster{
+		Name:           data.Name,
+		Css:            data.Css,
+		TypeTemplateID: data.TypeTemplateID,
+	}
+
+	if err := TemplateMasterRepo.CreateTemplateMaster(TemplateMaster); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal insert template master", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "berhasil menambahkan add template master", nil)
+}
+
+func UpdateTemplateMasterServices(c echo.Context, data *dto.UpdateTemplateMasterDto) error {
+	conn := db.GetDB()
+	TemplateMasterRepo := repository.NewTemplateMasterRepository(conn)
+	TemplateMaster := &models.TemplateMaster{
+		ID:             data.ID,
+		Name:           data.Name,
+		Css:            data.Css,
+		TypeTemplateID: data.TypeTemplateID,
+	}
+
+	if err := TemplateMasterRepo.UpdateTemplateMaster(TemplateMaster); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal insert template type", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success add template type", nil)
 }

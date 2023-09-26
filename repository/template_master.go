@@ -8,6 +8,8 @@ import (
 
 type TemplateMasterRepository interface {
 	GetAllTemplateMaster() ([]models.TemplateMaster, error)
+	CreateTemplateMaster(templateMaster *models.TemplateMaster) error
+	UpdateTemplateMaster(templateMaster *models.TemplateMaster) error
 }
 
 type TemplateMasterRepositoryImpl struct {
@@ -20,13 +22,22 @@ func NewTemplateMasterRepository(tx *gorm.DB) TemplateMasterRepository {
 
 func (tm *TemplateMasterRepositoryImpl) GetAllTemplateMaster() ([]models.TemplateMaster, error) {
 	templatemasters := new([]models.TemplateMaster)
-	result := tm.tx.
-		Find(&templatemasters)
+	result := tm.tx.Find(&templatemasters)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
 	return *templatemasters, nil
+}
+
+func (tm *TemplateMasterRepositoryImpl) CreateTemplateMaster(templateMaster *models.TemplateMaster) error {
+	result := tm.tx.Create(&templateMaster)
+	return result.Error
+}
+
+func (tm *TemplateMasterRepositoryImpl) UpdateTemplateMaster(templateMaster *models.TemplateMaster) error {
+	result := tm.tx.Model(&templateMaster).Updates(&templateMaster)
+	return result.Error
 }
 
 // func (tu *TemplateUserRepositoryImpl) CreateTemplateMaster(templateuser *models.TemplateUser) error {

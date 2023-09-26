@@ -22,4 +22,8 @@ func AdminRoutes(r *echo.Group, enforcer *casbin.Enforcer) {
 	v1.PATCH("/updatePackagesCategorys/:id", controller.UpdatePackagesCategorys)
 	v1.DELETE("/deletePackages/:id", controller.DeletePackages)
 	v1.DELETE("/deletePackagesCategorys/:id", controller.DeletePackageCategory)
+	v1.POST("/addtypeTemplate", controller.AddTypeTemplate)
+	v1.PATCH("/updatetypeTemplate/:id", controller.UpdateTypeTemplate)
+	v1.POST("/addTemplateMaster", controller.AddTemplateMaster)
+	v1.PATCH("/updateTemplateMaster/:id", controller.UpdateTemplateMaster)
 }

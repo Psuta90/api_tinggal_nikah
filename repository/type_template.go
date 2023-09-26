@@ -8,6 +8,8 @@ import (
 
 type TypeTemplateRepository interface {
 	GetAllTemplateType() ([]models.TypeTemplate, error)
+	AddTypeTemplate(typeTemplate *models.TypeTemplate) error
+	UpdateTypeTemplate(typeTemplate *models.TypeTemplate) error
 }
 
 type TypeTemplateRepositoryImpl struct {
@@ -28,4 +30,15 @@ func (tm *TypeTemplateRepositoryImpl) GetAllTemplateType() ([]models.TypeTemplat
 	}
 
 	return *typetemplates, nil
+}
+
+func (tm *TypeTemplateRepositoryImpl) AddTypeTemplate(typeTemplate *models.TypeTemplate) error {
+	result := tm.tx.Create(typeTemplate)
+	return result.Error
+
+}
+
+func (tm *TypeTemplateRepositoryImpl) UpdateTypeTemplate(typeTemplate *models.TypeTemplate) error {
+	result := tm.tx.Model(&typeTemplate).Updates(&typeTemplate)
+	return result.Error
 }

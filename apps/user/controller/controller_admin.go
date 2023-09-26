@@ -92,3 +92,59 @@ func DeletePackageCategory(c echo.Context) error {
 	return services.DeletePackageCategoryService(c, ID.ID)
 
 }
+
+func AddTypeTemplate(c echo.Context) error {
+	typeTemplate := new(dto.AddTypeTemplateDto)
+	if err := c.Bind(typeTemplate); err != nil {
+		return utils.NewAPIResponse(c).Error(0, err.Error(), err)
+	}
+
+	if err := utils.Validation(c, typeTemplate); err != nil {
+		return err
+	}
+
+	return services.AddTypeTemplateServices(c, typeTemplate)
+}
+
+func UpdateTypeTemplate(c echo.Context) error {
+	typeTemplate := new(dto.UpdateTypeTemplateDto)
+	if err := c.Bind(typeTemplate); err != nil {
+		return utils.NewAPIResponse(c).Error(0, err.Error(), err)
+	}
+
+	if err := utils.Validation(c, typeTemplate); err != nil {
+		return err
+	}
+
+	return services.UpdateTypeTemplateServices(c, typeTemplate)
+}
+
+func AddTemplateMaster(c echo.Context) error {
+	TemplateMaster := new(dto.AddTemplateMasterDto)
+
+	if err := c.Bind(TemplateMaster); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal bind to struct", err)
+	}
+
+	if err := utils.Validation(c, TemplateMaster); err != nil {
+		return err
+	}
+
+	return services.AddTemplateMasterService(c, TemplateMaster)
+
+}
+
+func UpdateTemplateMaster(c echo.Context) error {
+	TemplateMaster := new(dto.UpdateTemplateMasterDto)
+
+	if err := c.Bind(TemplateMaster); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal bind to struct", err)
+	}
+
+	if err := utils.Validation(c, TemplateMaster); err != nil {
+		return err
+	}
+
+	return services.UpdateTemplateMasterServices(c, TemplateMaster)
+
+}
