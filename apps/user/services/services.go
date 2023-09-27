@@ -12,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -904,4 +905,30 @@ func UpdateTemplateMasterServices(c echo.Context, data *dto.UpdateTemplateMaster
 	}
 
 	return utils.NewAPIResponse(c).Success(0, "success add template type", nil)
+}
+
+func GetUserPackageService(c echo.Context) error {
+
+	user_id := c.Get("JWT").(*jwt.Token).Claims.(*config.JwtCustomClaims).ID
+
+	conn := db.GetDB()
+	UserPackaRepo := repository.NewUserPackageRepository(conn)
+
+	data, err := UserPackaRepo.GetByUserID(user_id)
+	if err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal get userpackage by user id", err)
+	}
+
+	var datares []interface{}
+
+	for _, items := range data {
+		if time.Now().Before(items.EndDate) {
+			nm, _ := utils.StructToMap(items)
+			omit := lo.OmitByKeys(nm, []string{"UserTransaction"})
+
+			datares = append(datares, omit)
+		}
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success", datares)
 }

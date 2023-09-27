@@ -59,7 +59,7 @@ services:
       - postgres
 
   postgres:
-    image: postgres:latest
+    image: postgres:15-alpine
     environment:
       POSTGRES_DB: tinggal_nikah
       POSTGRES_USER: adriansyah

@@ -21,5 +21,6 @@ func CustomerRoutes(r *echo.Group, enforcer *casbin.Enforcer) {
 	v1.POST("/upload", controller.UploadFile)
 	v1.GET("/getWedding", controller.GetWedding)
 	v1.DELETE("/deleteWedding", controller.DeleteWedding)
+	v1.GET("/userHasPackage", controller.GetUserPackage)
 	// v1.POST("/testnats", controller.TestNats)
 }

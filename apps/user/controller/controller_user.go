@@ -120,6 +120,11 @@ func DeleteWedding(c echo.Context) error {
 	return utils.NewAPIResponse(c).Success(0, "route untuk delete", nil)
 }
 
+func GetUserPackage(c echo.Context) error {
+	//
+	return services.GetUserPackageService(c)
+}
+
 // func TestNats(c echo.Context) error {
 // 	message := "Hello, NATS JetStream!"
 
