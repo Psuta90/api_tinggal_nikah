@@ -71,6 +71,7 @@ func (ur *UserRepositoryImpl) GetWeddingUser(user_id uuid.UUID) (models.User, er
 		Preload("GiftDigital").
 		Preload("Domain").
 		Preload("TemplateUser").
+		Preload("MusicUser.MusicMaster").
 		Where("users.id = ?", user_id).Find(users)
 
 	if result.Error != nil {

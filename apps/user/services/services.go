@@ -9,6 +9,7 @@ import (
 	"api_tinggal_nikah/utils"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -38,6 +39,7 @@ func AddWeddingService(c echo.Context, data *dto.AddWeddingJSON) error {
 	DomainRepo := repository.NewDomainRepository(conn)
 	GalleryRepo := repository.NewGalleryPhotosRepository(conn)
 	TemplateUserRepo := repository.NewTemplateUserRepository(conn)
+	MusicUserRepo := repository.NewMusicUserReporsitory(conn)
 
 	acaras := []models.Acara{}
 	lovestorys := []models.LoveStory{}
@@ -72,6 +74,11 @@ func AddWeddingService(c echo.Context, data *dto.AddWeddingJSON) error {
 	template := &models.TemplateUser{
 		TemplateID: data.Template,
 		UserID:     user_id,
+	}
+
+	music := &models.MusicUser{
+		UserID:        user_id,
+		MusicMasterID: data.Music,
 	}
 
 	AcaraChannel := make(chan models.Acara)
@@ -318,6 +325,12 @@ func AddWeddingService(c echo.Context, data *dto.AddWeddingJSON) error {
 		conn.Rollback()
 		fmt.Println(err)
 		return utils.NewAPIResponse(c).FailedInsertDB(0, "gagal pada saat insert template", nil)
+	}
+
+	if err := MusicUserRepo.Add(music); err != nil {
+		conn.Rollback()
+		fmt.Println(err)
+		return utils.NewAPIResponse(c).FailedInsertDB(0, "gagal pada saat insert music", nil)
 	}
 
 	if err := GalleryRepo.CreateGalleryPhotos(&gallery); err != nil {
@@ -931,4 +944,207 @@ func GetUserPackageService(c echo.Context) error {
 	}
 
 	return utils.NewAPIResponse(c).Success(0, "success", datares)
+}
+
+func AddMusicMasterService(c echo.Context, data *dto.AddMusicMasterDto) error {
+
+	conn := db.GetDB()
+	MusicMasterRepo := repository.NewMusicMasterRepository(conn)
+	MusicMaster := []models.MusicMaster{}
+
+	MusicMasterChan := make(chan models.MusicMaster)
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	path := filepath.Join(cwd, "temp_music")
+
+	//check folder if not exist then create folder image_lp
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		if err := os.Mkdir(path, 0755); err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	go func() {
+		for _, file := range data.Files {
+
+			destinationPath := filepath.Join(path, file.Filename)
+
+			// Source
+			src, err := file.Open()
+			if err != nil {
+				fmt.Println(err)
+			}
+			defer src.Close()
+
+			// Destination
+			dst, err := os.Create(destinationPath)
+			if err != nil {
+				fmt.Println(err)
+			}
+			defer dst.Close()
+
+			// Copy
+			if _, err = io.Copy(dst, src); err != nil {
+				fmt.Println(err)
+			}
+
+			MusicMasterEntity := &models.MusicMaster{
+				Path: destinationPath,
+				Name: file.Filename,
+			}
+
+			MusicMasterChan <- *MusicMasterEntity
+
+		}
+
+		defer close(MusicMasterChan)
+
+	}()
+
+	for dataMusicMasterChan := range MusicMasterChan {
+		MusicMaster = append(MusicMaster, dataMusicMasterChan)
+	}
+
+	if err := MusicMasterRepo.Add(&MusicMaster); err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal insert music", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "Behasil Insert Music", MusicMaster)
+}
+
+func UpdateMusicMasterServices(c echo.Context, data *dto.UpdateMusic) error {
+
+	conn := db.GetDB().Begin()
+	MusicMasterRepo := repository.NewMusicMasterRepository(conn)
+
+	MusicChan := make(chan error)
+
+	go func() {
+		if data.Music != nil {
+
+			cwd, err := os.Getwd()
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			path := filepath.Join(cwd, "temp_music")
+
+			for _, value := range data.Music {
+
+				MusicMasterEntity := &models.MusicMaster{
+					ID:   value.ID,
+					Name: value.Name,
+					Path: filepath.Join(path, value.Filename),
+				}
+
+				MusicMasterRepo.Update(MusicMasterEntity, MusicChan)
+			}
+
+			defer close(MusicChan)
+		}
+	}()
+
+	for errMusicChan := range MusicChan {
+		if errMusicChan != nil {
+			conn.Rollback()
+			return utils.NewAPIResponse(c).Error(0, "gagal update music", errMusicChan)
+		}
+	}
+
+	if err := conn.Commit().Error; err != nil {
+		return utils.NewAPIResponse(c).Error(0, "Failed to commit update music", nil)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "berhasil Update Music", data)
+}
+
+func UploadMusicService(c echo.Context, data []*multipart.FileHeader) error {
+
+	cwd, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	path := filepath.Join(cwd, "temp_music")
+
+	for _, file := range data {
+
+		destinationPath := filepath.Join(path, file.Filename)
+
+		// Source
+		src, err := file.Open()
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer src.Close()
+
+		// Destination
+		dst, err := os.Create(destinationPath)
+		if err != nil {
+			fmt.Println(err)
+		}
+		defer dst.Close()
+
+		// Copy
+		if _, err = io.Copy(dst, src); err != nil {
+			fmt.Println(err)
+		}
+
+	}
+	return utils.NewAPIResponse(c).Success(0, "upload music berhasil", data)
+}
+
+func GetAllMusicService(c echo.Context) error {
+	conn := db.GetDB()
+	MusicMasterRepo := repository.NewMusicMasterRepository(conn)
+
+	data, err := MusicMasterRepo.FindAll()
+	if err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal mendapatkan data music", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "succsess get data music", data)
+
+}
+
+func UpdateRsvpServices(c echo.Context, data *dto.UpdateRsvpGuestBookDto) error {
+	conn := db.GetDB()
+	GuestBookRepo := repository.NewGuestBookRepository(conn)
+
+	GuestBookChan := make(chan error)
+
+	guestBok := &models.GuestBook{
+		ID:               data.ID,
+		Attendance:       data.Attendences,
+		MessageFromGuess: data.MessageFromGuest,
+	}
+
+	go func() {
+		GuestBookRepo.UpdateGuestBook(guestBok, GuestBookChan)
+		defer close(GuestBookChan)
+	}()
+
+	for errGuestBook := range GuestBookChan {
+		if errGuestBook != nil {
+			return utils.NewAPIResponse(c).Error(0, errGuestBook.Error(), errGuestBook)
+		}
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "api untuk rsvp", data)
+}
+
+func GetGuestServices(c echo.Context, name string) error {
+	conn := db.GetDB().Begin()
+	GuestBookRepo := repository.NewGuestBookRepository(conn)
+
+	data, err := GuestBookRepo.FindByNameGuestBook(name)
+	if err != nil {
+		return utils.NewAPIResponse(c).Error(0, "gagal mendapatkan guestbook by name", err)
+	}
+
+	return utils.NewAPIResponse(c).Success(0, "success", data)
 }

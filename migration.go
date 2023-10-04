@@ -3,9 +3,11 @@ package main
 import (
 	"api_tinggal_nikah/db"
 	"api_tinggal_nikah/migration"
+	"api_tinggal_nikah/models"
 	"fmt"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -21,7 +23,7 @@ func main() {
 	}
 
 	db.InitDB()
-
+	conn := db.GetDB()
 	// uncomment this every you change column or add tables
 	migrations := []migration.Migration{
 		&migration.CreateUsersTable{},
@@ -41,13 +43,33 @@ func main() {
 		&migration.TemplateUser{},
 		&migration.CreateUsersTransactionTable{},
 		&migration.CreateUsersPackage{},
+		&migration.CreateMusicMasterTable{},
+		&migration.CreateMusicUserTable{},
 		// Add other migration instances here if needed
 	}
 	for _, m := range migrations {
-		conn := db.GetDB()
+
 		if err := m.Up(conn); err != nil {
 			panic("Migration failed: " + err.Error())
 		}
 	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("@Min12cibubur"), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	userAdmin := models.User{
+		FullName: "admin",
+		Email:    "admin@tinggalnikah.com",
+		Password: string(hashedPassword),
+		Role:     models.Admin,
+	}
+
+	if err := conn.Create(&userAdmin).Error; err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
 	// end migration
 }

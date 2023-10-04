@@ -7,12 +7,14 @@ import (
 
 type GuestBook struct {
 	gorm.Model
-	ID           uuid.UUID `gorm:"default:uuid_generate_v4();primaryKey"`
-	UserID       uuid.UUID
-	Group        string
-	Name         string
-	Phone        string
-	LinkWhatsapp string
-	Message      string
-	Orders       int
+	ID               uuid.UUID `gorm:"default:uuid_generate_v4();primaryKey"`
+	UserID           uuid.UUID
+	Group            string
+	Name             string
+	Phone            string
+	LinkWhatsapp     string
+	Message          string
+	Orders           int
+	Attendance       bool
+	MessageFromGuess string
 }

@@ -148,3 +148,51 @@ func UpdateTemplateMaster(c echo.Context) error {
 	return services.UpdateTemplateMasterServices(c, TemplateMaster)
 
 }
+
+func AddMusicMaster(c echo.Context) error {
+	form, err := c.MultipartForm()
+	if err != nil {
+		return err
+	}
+
+	files := form.File["files"]
+	data := &dto.AddMusicMasterDto{
+		Files: files,
+	}
+
+	if err := utils.Validation(c, data); err != nil {
+		return err
+	}
+
+	return services.AddMusicMasterService(c, data)
+
+}
+
+func UpdateMusicMaster(c echo.Context) error {
+	musicMaster := new(dto.UpdateMusic)
+
+	if err := c.Bind(musicMaster); err != nil {
+		return utils.NewAPIResponse(c).Error(0, err.Error(), err)
+	}
+
+	return services.UpdateMusicMasterServices(c, musicMaster)
+}
+
+func UploadMusic(c echo.Context) error {
+	form, err := c.MultipartForm()
+	if err != nil {
+		return err
+	}
+
+	files := form.File["files"]
+
+	Music := &dto.UploadMusicDto{
+		Files: files,
+	}
+
+	if err := utils.Validation(c, Music); err != nil {
+		return err
+	}
+
+	return services.UploadMusicService(c, files)
+}

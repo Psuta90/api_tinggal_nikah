@@ -31,7 +31,10 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 			case "valid-image":
 				// Pesan kesalahan kustom untuk tag "required"
 				errorMessage = fmt.Sprintf("%s : is not a valid image check size less then 5mb or format image", err.StructNamespace())
+			case "valid-music":
+				errorMessage = fmt.Sprintf("%s : is not a valid music check size less then 5mb or format music is must mp3", err.StructNamespace())
 			}
+
 		}
 		return echo.NewHTTPError(http.StatusBadRequest, errorMessage)
 	}
@@ -43,6 +46,7 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 func NewCustomValidator() echo.Validator {
 	v := validator.New()
 	v.RegisterValidation("valid-image", ValidImage)
+	v.RegisterValidation("valid-music", ValidMusic)
 	cv := &CustomValidator{validator: v}
 
 	return cv
@@ -70,7 +74,7 @@ func ValidImage(fl validator.FieldLevel) bool {
 	maxSize := int64(1048576) * 5 // 1mb
 
 	for _, file := range files {
-		if !isValidFormat(file) {
+		if !isValidFormatImage(file) {
 			return false
 		}
 
@@ -82,11 +86,49 @@ func ValidImage(fl validator.FieldLevel) bool {
 	return true
 }
 
-func isValidFormat(file *multipart.FileHeader) bool {
+func ValidMusic(fl validator.FieldLevel) bool {
+	files := fl.Field().Interface().([]*multipart.FileHeader)
+
+	if len(files) == 0 {
+		return false // Minimal satu file harus diunggah
+	}
+	maxSize := int64(1048576) * 5 // 1mb
+
+	for _, file := range files {
+		if !isValidFormatMusic(file) {
+			return false
+		}
+
+		if file.Size >= maxSize {
+			return false
+		}
+	}
+
+	return true
+}
+
+func isValidFormatImage(file *multipart.FileHeader) bool {
 	ext := strings.ToLower(filepath.Ext(file.Filename))
 
 	// Tentukan ekstensi yang diizinkan (misalnya, jpg, jpeg, dan png)
 	allowedExtensions := []string{".jpg", ".jpeg", ".png"}
+
+	// Lakukan pengecekan apakah ekstensi file ada dalam daftar yang diizinkan
+	for _, allowedExt := range allowedExtensions {
+		if ext == allowedExt {
+			return true
+		}
+	}
+
+	// Jika ekstensi file tidak ada dalam daftar yang diizinkan, maka return false
+	return false
+}
+
+func isValidFormatMusic(file *multipart.FileHeader) bool {
+	ext := strings.ToLower(filepath.Ext(file.Filename))
+
+	// Tentukan ekstensi yang diizinkan (misalnya, jpg, jpeg, dan png)
+	allowedExtensions := []string{".mp3"}
 
 	// Lakukan pengecekan apakah ekstensi file ada dalam daftar yang diizinkan
 	for _, allowedExt := range allowedExtensions {

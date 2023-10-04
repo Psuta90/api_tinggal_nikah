@@ -26,4 +26,7 @@ func AdminRoutes(r *echo.Group, enforcer *casbin.Enforcer) {
 	v1.PATCH("/updatetypeTemplate/:id", controller.UpdateTypeTemplate)
 	v1.POST("/addTemplateMaster", controller.AddTemplateMaster)
 	v1.PATCH("/updateTemplateMaster/:id", controller.UpdateTemplateMaster)
+	v1.POST("/addMusicMaster", controller.AddMusicMaster)
+	v1.PATCH("/updateMusicMaster", controller.UpdateMusicMaster)
+	v1.POST("/uploadMusic", controller.UploadMusic)
 }

@@ -9,6 +9,7 @@ import (
 type GuestBookRepository interface {
 	CreateGuestBook(guestbook *[]models.GuestBook) error
 	UpdateGuestBook(guestbook *models.GuestBook, errChan chan error)
+	FindByNameGuestBook(name string) (*models.GuestBook, error)
 }
 
 type GuestBookRepositoryImpl struct {
@@ -31,4 +32,11 @@ func (gr *GuestBookRepositoryImpl) UpdateGuestBook(guestbook *models.GuestBook, 
 	}
 
 	errChan <- nil
+}
+
+func (gr *GuestBookRepositoryImpl) FindByNameGuestBook(name string) (*models.GuestBook, error) {
+	guestBook := new(models.GuestBook)
+	result := gr.tx.Where("name = ?", name).Find(&guestBook)
+
+	return guestBook, result.Error
 }

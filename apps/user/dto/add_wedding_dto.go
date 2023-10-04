@@ -16,6 +16,7 @@ type AddWeddingDto struct {
 	Subdomain          string    `form:"subdomain"`
 	PremiumDomain      string    `form:"premiumdomain"`
 	Template           uuid.UUID `form:"template"`
+	Music              uuid.UUID `form:"music"`
 }
 
 type AddWeddingJSON struct {
@@ -29,6 +30,7 @@ type AddWeddingJSON struct {
 	Subdomain           string                  `validate:"required"`
 	PremiumDomain       string
 	Template            uuid.UUID `validate:"required"`
+	Music               uuid.UUID `validate:"required"`
 }
 
 type DataMempelai struct {

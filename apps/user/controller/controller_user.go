@@ -69,6 +69,7 @@ func AddWedding(c echo.Context) error {
 		HalamanUtamaGallery: filesHalamanUtama,
 		GalleryPhotos:       filesGalleryPhoto,
 		Template:            data.Template,
+		Music:               data.Music,
 	}
 
 	if err := utils.Validation(c, wjs); err != nil {
@@ -121,8 +122,11 @@ func DeleteWedding(c echo.Context) error {
 }
 
 func GetUserPackage(c echo.Context) error {
-	//
 	return services.GetUserPackageService(c)
+}
+
+func GetUserMusic(c echo.Context) error {
+	return services.GetAllMusicService(c)
 }
 
 // func TestNats(c echo.Context) error {
