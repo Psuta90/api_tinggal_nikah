@@ -377,6 +377,7 @@ func AddWeddingService(c echo.Context, data *dto.AddWeddingJSON) error {
 
 func UploadFileService(c echo.Context, data *dto.UploadFileDto) error {
 
+	bucket := config.GetClientMinio()
 	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Println(err)
@@ -393,6 +394,7 @@ func UploadFileService(c echo.Context, data *dto.UploadFileDto) error {
 
 	for _, file := range data.GalleryPhotos {
 
+		bucketPath := filepath.Join("image", file.Filename)
 		destinationPath := filepath.Join(path, file.Filename)
 
 		// Source
@@ -413,12 +415,20 @@ func UploadFileService(c echo.Context, data *dto.UploadFileDto) error {
 		if _, err = io.Copy(dst, src); err != nil {
 			return utils.NewAPIResponse(c).Error(0, "", err)
 		}
+
+		info, err := bucket.FPutObject(c.Request().Context(), os.Getenv("WASABI_BUCKET_NAME"), bucketPath, path, minio.PutObjectOptions{ContentType: "image/jpeg"})
+		if err != nil {
+			return utils.NewAPIResponse(c).Error(0, "", err)
+		}
+
+		fmt.Println("Berhasil Upload To Bucket", info)
 
 	}
 
 	for _, file := range data.HalamanUtamaGallery {
 
 		destinationPath := filepath.Join(path, file.Filename)
+		bucketPath := filepath.Join("image", file.Filename)
 
 		// Source
 		src, err := file.Open()
@@ -438,6 +448,13 @@ func UploadFileService(c echo.Context, data *dto.UploadFileDto) error {
 		if _, err = io.Copy(dst, src); err != nil {
 			return utils.NewAPIResponse(c).Error(0, "", err)
 		}
+
+		info, err := bucket.FPutObject(c.Request().Context(), os.Getenv("WASABI_BUCKET_NAME"), bucketPath, path, minio.PutObjectOptions{ContentType: "image/jpeg"})
+		if err != nil {
+			return utils.NewAPIResponse(c).Error(0, "", err)
+		}
+
+		fmt.Println("Berhasil Upload To Bucket", info)
 
 	}
 
@@ -496,21 +513,15 @@ func UdateWeddingService(c echo.Context, data *dto.UpdateWeddingDto) error {
 		if data.Gallery != nil {
 			for _, value := range data.Gallery {
 
-				cwd, err := os.Getwd()
-				if err != nil {
-					fmt.Println(err)
-				}
-
-				path := filepath.Join(cwd, "temp_image")
+				dbpath := filepath.Join("image", value.Filename)
 
 				GalleryEntity := &models.GalleryPhotos{
 					ID:             value.ID,
-					Path:           filepath.Join(path, value.Filename),
+					Path:           dbpath,
 					Orders:         value.Order,
 					IsGallery:      value.IsGallery,
 					IsHalamanUtama: value.IsHalamanUtama,
 				}
-
 				GalleryPhotosRepo.UpdateGalleryPhotos(*GalleryEntity, gallery)
 
 			}

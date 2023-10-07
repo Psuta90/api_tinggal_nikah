@@ -2,18 +2,21 @@ package services
 
 import (
 	"api_tinggal_nikah/apps/user/dto"
+	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/db"
 	"api_tinggal_nikah/models"
 	"api_tinggal_nikah/repository"
 	"api_tinggal_nikah/utils"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"os"
 	"path/filepath"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"github.com/minio/minio-go/v7"
 )
 
 func AddPackagesService(c echo.Context, data *dto.AddPackagesDto) error {
@@ -211,6 +214,7 @@ func UpdateTemplateMasterServices(c echo.Context, data *dto.UpdateTemplateMaster
 func AddMusicMasterService(c echo.Context, data *dto.AddMusicMasterDto) error {
 
 	conn := db.GetDB()
+	bucket := config.GetClientMinio()
 	MusicMasterRepo := repository.NewMusicMasterRepository(conn)
 	MusicMaster := []models.MusicMaster{}
 
@@ -234,6 +238,7 @@ func AddMusicMasterService(c echo.Context, data *dto.AddMusicMasterDto) error {
 		for _, file := range data.Files {
 
 			destinationPath := filepath.Join(path, file.Filename)
+			dbpath := filepath.Join("music", file.Filename)
 
 			// Source
 			src, err := file.Open()
@@ -255,9 +260,16 @@ func AddMusicMasterService(c echo.Context, data *dto.AddMusicMasterDto) error {
 			}
 
 			MusicMasterEntity := &models.MusicMaster{
-				Path: destinationPath,
+				Path: dbpath,
 				Name: file.Filename,
 			}
+
+			info, err := bucket.FPutObject(c.Request().Context(), os.Getenv("WASABI_BUCKET_NAME"), dbpath, destinationPath, minio.PutObjectOptions{})
+			if err != nil {
+				log.Fatalln(err)
+			}
+
+			fmt.Println(info)
 
 			MusicMasterChan <- *MusicMasterEntity
 
@@ -288,19 +300,12 @@ func UpdateMusicMasterServices(c echo.Context, data *dto.UpdateMusic) error {
 	go func() {
 		if data.Music != nil {
 
-			cwd, err := os.Getwd()
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			path := filepath.Join(cwd, "temp_music")
-
 			for _, value := range data.Music {
 
 				MusicMasterEntity := &models.MusicMaster{
 					ID:   value.ID,
 					Name: value.Name,
-					Path: filepath.Join(path, value.Filename),
+					Path: filepath.Join("music", value.Filename),
 				}
 
 				MusicMasterRepo.Update(MusicMasterEntity, MusicChan)
@@ -326,6 +331,7 @@ func UpdateMusicMasterServices(c echo.Context, data *dto.UpdateMusic) error {
 
 func UploadMusicService(c echo.Context, data []*multipart.FileHeader) error {
 
+	bucket := config.GetClientMinio()
 	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Println(err)
@@ -336,6 +342,7 @@ func UploadMusicService(c echo.Context, data []*multipart.FileHeader) error {
 	for _, file := range data {
 
 		destinationPath := filepath.Join(path, file.Filename)
+		bucketPath := filepath.Join("music", file.Filename)
 
 		// Source
 		src, err := file.Open()
@@ -355,6 +362,13 @@ func UploadMusicService(c echo.Context, data []*multipart.FileHeader) error {
 		if _, err = io.Copy(dst, src); err != nil {
 			fmt.Println(err)
 		}
+
+		info, err := bucket.FPutObject(c.Request().Context(), os.Getenv("WASABI_BUCKET_NAME"), bucketPath, destinationPath, minio.PutObjectOptions{})
+		if err != nil {
+			log.Fatalln(err)
+		}
+
+		fmt.Println("berhsil upload bucket", info)
 
 	}
 	return utils.NewAPIResponse(c).Success(0, "upload music berhasil", data)
