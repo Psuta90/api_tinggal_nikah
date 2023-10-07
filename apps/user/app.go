@@ -2,6 +2,7 @@ package main
 
 import (
 	"api_tinggal_nikah/apps/user/routes"
+	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/db"
 	messagebroker "api_tinggal_nikah/message_broker"
 
@@ -30,6 +31,11 @@ func main() {
 	defer messagebroker.CloseNATS()
 
 	e.Validator = utils.NewCustomValidator()
+
+	_, err := config.InitializeMinioClient()
+	if err != nil {
+		panic(err)
+	}
 
 	cwd, err := os.Getwd()
 	if err != nil {
