@@ -14,7 +14,6 @@ func CasbinMiddleware(enforcer *casbin.Enforcer) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			payloadJwt := c.Get("JWT").(*jwt.Token).Claims.(*config.JwtCustomClaims)
-
 			obj := c.Request().URL.Path
 			act := c.Request().Method
 

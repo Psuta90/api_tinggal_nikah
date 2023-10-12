@@ -57,6 +57,60 @@ services:
     command: bash -c "go mod tidy && air -c .air.toml"
     depends_on :
       - postgres
+  
+  api_tinggal_nikah_worker : 
+    build:
+      context: ./apps/worker
+      dockerfile: Dockerfile
+    ports :
+      - 3004:3004
+    volumes : 
+      - ./:/app
+    env_file :
+      - ./apps/worker/.env.local
+    command: bash -c "go mod tidy && air -c .air.toml"
+    depends_on :
+      - postgres
+      - redis
+
+  api_tinggal_nikah_worker_scheduler : 
+    build:
+      context: ./apps/worker_scheduler
+      dockerfile: Dockerfile
+    ports :
+      - 3006:3006
+    volumes : 
+      - ./:/app
+    env_file :
+      - ./apps/worker_scheduler/.env.local
+    command: bash -c "go mod tidy && air -c .air.toml"
+    depends_on :
+      - postgres
+      - redis
+
+  api_tinggal_nikah_worker_ui : 
+    build:
+      context: ./apps/worker_ui
+      dockerfile: Dockerfile
+    ports :
+      - 3005:3005
+    volumes : 
+      - ./:/app
+    env_file :
+      - ./apps/worker_ui/.env.local
+    command: bash -c "go mod tidy && air -c .air.toml"
+    depends_on :
+      - postgres
+      - redis
+    
+  # asynqmon:
+  #   image: hibiken/asynqmon
+  #   container_name: asynqmon
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - redis
+  #   command: --redis-addr=redis:6379 --redis-db=1
 
   postgres:
     image: postgres:15-alpine
@@ -70,11 +124,12 @@ services:
       - ./data:/var/lib/postgresql/data
   
   redis:
-    image: redis:7.2.1-alpine
-    restart: always
+    image: bitnami/redis:6.2.13
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PORT_NUMBER=6379
     ports:
       - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning
     volumes: 
       - ./redis:/data
       

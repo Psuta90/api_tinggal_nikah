@@ -9,6 +9,7 @@ import (
 type GalleryPhotosRepository interface {
 	CreateGalleryPhotos(gallery *[]models.GalleryPhotos) error
 	UpdateGalleryPhotos(gallery models.GalleryPhotos, errChan chan error)
+	GetAllGalleryPhotos() ([]models.GalleryPhotos, error)
 }
 
 type GalleryPhotosRepositoryImpl struct {
@@ -32,4 +33,10 @@ func (gp *GalleryPhotosRepositoryImpl) UpdateGalleryPhotos(gallery models.Galler
 	}
 
 	errChan <- nil
+}
+
+func (gp *GalleryPhotosRepositoryImpl) GetAllGalleryPhotos() ([]models.GalleryPhotos, error) {
+	Gallery := new([]models.GalleryPhotos)
+	result := gp.tx.Find(&Gallery)
+	return *Gallery, result.Error
 }
