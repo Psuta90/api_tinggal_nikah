@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api_tinggal_nikah/config"
 	"api_tinggal_nikah/db"
 	"api_tinggal_nikah/tasks/handler"
 	"api_tinggal_nikah/tasks/tasktype"
@@ -14,6 +15,10 @@ func init() {
 	utils.Client()
 	db.InitRedisConnection()
 	db.InitDB()
+	_, err := config.InitializeMinioClient()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
