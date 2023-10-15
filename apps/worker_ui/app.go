@@ -8,7 +8,6 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/hibiken/asynqmon"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 func init() {
@@ -26,8 +25,7 @@ func main() {
 	})
 
 	config.ConfigCors(e)
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
+
 	e.Any("/monitoring/tasks/*", echo.WrapHandler(mon))
 	e.Logger.Fatal(e.Start(":3005"))
 }
